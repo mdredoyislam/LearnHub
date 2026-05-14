@@ -16,14 +16,14 @@
   </div>
 </div></nav>
 
-<div class="dash-container container">
+<div class="dash-container">
   <aside class="sidebar">
     <div class="sidebar-menu">
-      <a href="#" class="active" onclick="switchTab('analytics')">📊 Analytics</a>
-      <a href="#" onclick="switchTab('users')">👥 Users</a>
-      <a href="#" onclick="switchTab('courses')">📚 Courses</a>
-      <a href="#" onclick="switchTab('enrollments')">⏳ Enrollments</a>
-      <a href="#" onclick="switchTab('withdrawals')">💰 Withdrawals</a>
+      <a href="#" class="active" onclick="switchTab('analytics')"><i class="fas fa-chart-pie"></i> Analytics</a>
+      <a href="#" onclick="switchTab('users')"><i class="fas fa-users"></i> Users</a>
+      <a href="#" onclick="switchTab('courses')"><i class="fas fa-book"></i> Courses</a>
+      <a href="#" onclick="switchTab('enrollments')"><i class="fas fa-hourglass-half"></i> Enrollments</a>
+      <a href="#" onclick="switchTab('withdrawals')"><i class="fas fa-wallet"></i> Withdrawals</a>
     </div>
   </aside>
 
@@ -36,10 +36,10 @@
         <button onclick="loadAnalytics()" class="btn btn-secondary btn-sm">🔄 Refresh</button>
       </div>
       <div class="dash-grid">
-        <div class="stat-card"><div class="stat-icon" style="background:rgba(99,102,241,0.15);">👥</div><div class="stat-value text-gradient" id="s-users">—</div><div class="stat-label">Total Users</div></div>
-        <div class="stat-card"><div class="stat-icon" style="background:rgba(59,130,246,0.15);">💰</div><div class="stat-value" style="color:var(--indigo-light)" id="s-revenue">৳0</div><div class="stat-label">Total Revenue</div></div>
-        <div class="stat-card"><div class="stat-icon" style="background:rgba(16,185,129,0.15);">💼</div><div class="stat-value" style="color:var(--emerald)" id="s-commission">৳0</div><div class="stat-label">Site Commission (10%)</div></div>
-        <div class="stat-card"><div class="stat-icon" style="background:rgba(244,63,94,0.15);">📚</div><div class="stat-value" style="color:var(--rose)" id="s-courses">—</div><div class="stat-label">Total Courses</div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:rgba(99,102,241,0.15);"><i class="fas fa-users"></i></div><div class="stat-value text-gradient" id="s-users">—</div><div class="stat-label">Total Users</div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:rgba(59,130,246,0.15);"><i class="fas fa-dollar-sign"></i></div><div class="stat-value" style="color:var(--indigo-light)" id="s-revenue">৳0</div><div class="stat-label">Total Revenue</div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:rgba(16,185,129,0.15);"><i class="fas fa-briefcase"></i></div><div class="stat-value" style="color:var(--emerald)" id="s-commission">৳0</div><div class="stat-label">Site Commission (10%)</div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:rgba(244,63,94,0.15);"><i class="fas fa-book-open"></i></div><div class="stat-value" style="color:var(--rose)" id="s-courses">—</div><div class="stat-label">Total Courses</div></div>
       </div>
     </div>
 

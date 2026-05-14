@@ -30,10 +30,19 @@ function logout() {
 }
 
 function redirectToDashboard() {
-    const role = localStorage.getItem('lh_role');
-    if (role === 'ADMIN') window.location.href = '/pages/admin/dashboard.html';
-    else if (role === 'TEACHER') window.location.href = '/pages/teacher/dashboard.html';
-    else window.location.href = '/pages/student/dashboard.html';
+    let role = localStorage.getItem('lh_role');
+    if (!role) { window.location.href = '/login.html'; return; }
+    
+    role = role.trim().toUpperCase();
+    console.log('[LearnHub] Redirecting for role:', role);
+
+    if (role === 'ADMIN') {
+        window.location.href = '/pages/admin/dashboard.html';
+    } else if (role === 'TEACHER') {
+        window.location.href = '/pages/teacher/dashboard.html';
+    } else {
+        window.location.href = '/pages/student/dashboard.html';
+    }
 }
 
 function requireAuth(requiredRole = null) {

@@ -1,4 +1,4 @@
-# 🎓 Learn Hub — Online Learning Management System
+# Learn Hub — Online Learning Management System
 
 Learn Hub is a modern, full-stack Online Learning Management System (LMS) built with **Java Spring Boot** (Backend) and **HTML/CSS/JS** with a premium **Glassmorphism** UI (Frontend). 
 
@@ -6,7 +6,7 @@ This platform allows instructors to create and sell courses, students to enroll 
 
 ---
 
-## 🚀 Features
+## Features
 
 - **Role-Based Access Control (RBAC):** Three distinct roles: `Admin`, `Teacher`, and `Student`.
 - **Course Management:** Teachers can create courses, upload video lessons, and build interactive quizzes.
@@ -19,16 +19,27 @@ This platform allows instructors to create and sell courses, students to enroll 
 
 ---
 
-## 📸 Step-by-Step Walkthrough & Screenshots
+##Demo Accounts
+Demo Credentials
+Admin: admin@test.com
+Teacher: teacher@test.com
+Student: student@test.com
+Password: Password123!
 
-Create a folder named `screenshots` in the root of your repository and place your images there. Here is the step-by-step breakdown of how the platform works:
+---
+
+## Step-by-Step Walkthrough & Screenshots
+
+Below is a step-by-step breakdown of how the Learn Hub platform works, illustrated with screenshots from the system:
 
 ### 1. Landing & Authentication
 The entry point for all users. Features a dynamic hero section and displays available public courses.
 - **Landing Page:** 
   ![Landing Page](screenshots/landing.png)
-- **Sign In / Sign Up:** 
+- **Login Page:** 
   ![Login Page](screenshots/login.png)
+- **Registration Page:** 
+  ![Register Page](screenshots/register.png)
 
 ### 2. Admin Dashboard
 The central control hub for the platform owner.
@@ -70,7 +81,7 @@ All users have access to their profile to update their details and passwords.
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 **Backend:**
 - Java 17+
@@ -87,7 +98,7 @@ All users have access to their profile to update their details and passwords.
 
 ---
 
-## ⚙️ Installation & Setup
+## Installation & Setup
 
 1. **Clone the repository:**
    ```bash
@@ -116,4 +127,4 @@ All users have access to their profile to update their details and passwords.
 ---
 
 ## 🤝 Contribution
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/yourusername/LearnHub/issues).
+Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/mdredoyislam/LearnHub/issues).

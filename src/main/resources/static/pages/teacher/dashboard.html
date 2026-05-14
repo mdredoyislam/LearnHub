@@ -16,13 +16,13 @@
   </div>
 </div></nav>
 
-<div class="dash-container container">
+<div class="dash-container">
   <aside class="sidebar">
     <div class="sidebar-menu">
-      <a href="#" class="active" onclick="switchTab('overview')">🏠 Overview</a>
-      <a href="#" onclick="switchTab('courses')">📚 My Courses</a>
-      <a href="#" onclick="switchTab('enrollments')">⏳ Enrollments</a>
-      <a href="#" onclick="switchTab('earnings')">💰 Earnings & Withdraw</a>
+      <a href="#" class="active" onclick="switchTab('overview')"><i class="fas fa-home"></i> Overview</a>
+      <a href="#" onclick="switchTab('courses')"><i class="fas fa-book"></i> My Courses</a>
+      <a href="#" onclick="switchTab('enrollments')"><i class="fas fa-hourglass-half"></i> Enrollments</a>
+      <a href="#" onclick="switchTab('earnings')"><i class="fas fa-wallet"></i> Earnings & Withdraw</a>
     </div>
   </aside>
 
@@ -36,17 +36,17 @@
       </div>
       <div class="dash-grid">
         <div class="stat-card">
-          <div class="stat-icon" style="background:rgba(99,102,241,0.15);">📚</div>
+          <div class="stat-icon" style="background:rgba(99,102,241,0.15);"><i class="fas fa-book"></i></div>
           <div class="stat-value text-gradient" id="s-courses">—</div>
           <div class="stat-label">Total Courses</div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon" style="background:rgba(16,185,129,0.15);">👥</div>
+          <div class="stat-icon" style="background:rgba(16,185,129,0.15);"><i class="fas fa-users"></i></div>
           <div class="stat-value" style="color:var(--emerald)" id="s-students">—</div>
           <div class="stat-label">Total Students</div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon" style="background:rgba(245,158,11,0.15);">💰</div>
+          <div class="stat-icon" style="background:rgba(245,158,11,0.15);"><i class="fas fa-dollar-sign"></i></div>
           <div class="stat-value" style="color:var(--amber)" id="s-earnings">৳0</div>
           <div class="stat-label">Net Earnings (After 10%)</div>
         </div>
@@ -143,7 +143,7 @@
       document.getElementById('teacher-courses-grid').innerHTML = courses.map(c => `
         <div class="course-card">
           <div class="course-card-img">
-            ${c.photo ? `<img src="${c.photo}" alt="${c.courseName}" style="width:100%;height:100%;object-fit:cover;">` : '<div class="placeholder-icon">📚</div>'}
+            ${c.photo ? `<img src="${c.photo}" alt="${c.courseName}" style="width:100%;height:100%;object-fit:cover;">` : '<div class="placeholder-icon"><i class="fas fa-book"></i></div>'}
           </div>
           <div class="course-card-body">
             <h3 class="course-card-title">${c.courseName}</h3>

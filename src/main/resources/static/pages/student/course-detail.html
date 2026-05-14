@@ -24,8 +24,8 @@
 
   <!-- Tabs -->
   <div class="tabs">
-    <div class="tab active" data-tab="lessons-tab" onclick="switchTab(this,'lessons-tab')">📹 Lessons</div>
-    <div class="tab" data-tab="exam-tab" onclick="switchTab(this,'exam-tab')">📝 Exam</div>
+    <div class="tab active" data-tab="lessons-tab" onclick="switchTab(this,'lessons-tab')"><i class="fas fa-play-circle"></i> Lessons</div>
+    <div class="tab" data-tab="exam-tab" onclick="switchTab(this,'exam-tab')"><i class="fas fa-file-alt"></i> Exam</div>
   </div>
 
   <!-- Lessons -->
@@ -68,12 +68,12 @@
         <div style="display:flex;gap:1.5rem;flex-wrap:wrap;align-items:flex-start;">
           <div style="flex:1;min-width:200px;">
             <h2 style="margin-bottom:0.5rem;">${course.courseName}</h2>
-            <p class="text-sm text-muted mb-2">👨‍🏫 ${course.teacherName}</p>
+            <p class="text-sm text-muted mb-2"><i class="fas fa-user-tie"></i> ${course.teacherName}</p>
             <p style="color:var(--text-secondary);font-size:0.9rem;">${course.description||''}</p>
             <div style="display:flex;gap:1rem;margin-top:1rem;flex-wrap:wrap;">
-              <span class="badge badge-primary">📹 ${course.lessonCount} Lessons</span>
-              <span class="badge badge-primary">❓ ${course.quizCount} Questions</span>
-              ${course.pdfBook ? `<a href="${course.pdfBook}" target="_blank" class="badge badge-amber">📄 Download PDF</a>` : ''}
+              <span class="badge badge-primary"><i class="fas fa-play-circle"></i> ${course.lessonCount} Lessons</span>
+              <span class="badge badge-primary"><i class="fas fa-question-circle"></i> ${course.quizCount} Questions</span>
+              ${course.pdfBook ? `<a href="${course.pdfBook}" target="_blank" class="badge badge-amber"><i class="fas fa-file-pdf"></i> Download PDF</a>` : ''}
             </div>
           </div>
         </div>`;
@@ -96,9 +96,9 @@
             <div style="width:40px;height:40px;border-radius:10px;background:rgba(99,102,241,0.15);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--indigo-light);flex-shrink:0;">${i+1}</div>
             <div style="flex:1;">
               <div style="font-weight:600;">${l.lessonTitle}</div>
-              <div class="text-sm text-muted">${l.videoType === 'YOUTUBE' ? '▶ YouTube Video' : '🎞 Video'}</div>
+              <div class="text-sm text-muted">${l.videoType === 'YOUTUBE' ? 'YouTube Video' : 'Video'}</div>
             </div>
-            <div style="color:var(--indigo-light);">▶</div>
+            <div style="color:var(--indigo-light);"><i class="fas fa-play"></i></div>
           </div>
           <div id="player-${i}" class="hidden" style="margin-top:1rem;">
             ${l.videoType === 'YOUTUBE' && l.videoUrl
@@ -109,7 +109,7 @@
           </div>
         </div>`).join('');
     } catch(e) {
-      document.getElementById('lessons-container').innerHTML = '<div class="card" style="text-align:center;color:var(--rose);"><p>⚠️ You need to be enrolled to view lessons.</p><a href="/pages/student/dashboard.html" class="btn btn-secondary btn-sm mt-2">Go to Dashboard</a></div>';
+      document.getElementById('lessons-container').innerHTML = '<div class="card" style="text-align:center;color:var(--rose);"><p><i class="fas fa-exclamation-triangle"></i> You need to be enrolled to view lessons.</p><a href="/pages/student/dashboard.html" class="btn btn-secondary btn-sm mt-2">Go to Dashboard</a></div>';
     }
   }
 
@@ -136,11 +136,11 @@
       const result = await api.get(`/student/exam/${courseId}/result`);
       container.innerHTML = `
         <div class="card" style="text-align:center;padding:2rem;">
-          <div style="font-size:3rem;margin-bottom:1rem;">${result.passed ? '🎉' : '😔'}</div>
+          <div style="font-size:3rem;margin-bottom:1rem;color:var(--indigo-light);"><i class="fas ${result.passed ? 'fa-award' : 'fa-times-circle'}"></i></div>
           <h3 style="margin-bottom:0.75rem;">Exam ${result.passed ? 'Passed!' : 'Not Passed'}</h3>
           <div style="font-size:2rem;font-weight:700;margin-bottom:0.5rem;" class="${result.passed?'text-emerald':'text-rose'}">${result.examMark}%</div>
           <p class="text-muted mb-3">Score: ${result.examMark} out of 100 · ${result.totalQuestions} questions</p>
-          ${result.certificateEligible ? `<a href="/pages/student/certificate.html?courseId=${courseId}" class="btn btn-success btn-lg">🏆 View Certificate</a>` : '<p class="text-sm text-muted">You need 50% or above to earn a certificate.</p>'}
+          ${result.certificateEligible ? `<a href="/pages/student/certificate.html?courseId=${courseId}" class="btn btn-success btn-lg"><i class="fas fa-trophy"></i> View Certificate</a>` : '<p class="text-sm text-muted">You need 50% or above to earn a certificate.</p>'}
         </div>`;
       return;
     } catch(e) { /* not taken yet */ }
@@ -152,7 +152,7 @@
         container.innerHTML = '<div class="card" style="text-align:center;"><p>No exam questions available for this course.</p></div>';
         return;
       }
-      let html = `<div style="margin-bottom:1.5rem;"><h3>📝 Course Exam</h3><p class="text-muted text-sm">${quiz.length} questions · Answer all to submit</p></div>`;
+      let html = `<div style="margin-bottom:1.5rem;"><h3><i class="fas fa-edit"></i> Course Exam</h3><p class="text-muted text-sm">${quiz.length} questions · Answer all to submit</p></div>`;
       html += quiz.map((q, i) => `
         <div class="quiz-question">
           <div class="quiz-q-text">Q${i+1}. ${q.question}</div>
@@ -167,7 +167,7 @@
       html += `<button onclick="submitExam(${JSON.stringify(quiz.map(q=>q.quizId))})" class="btn btn-primary btn-lg" style="margin-top:1rem;">Submit Exam →</button>`;
       container.innerHTML = html;
     } catch(e) {
-      container.innerHTML = '<div class="card" style="text-align:center;color:var(--rose);"><p>⚠️ You need to be enrolled to take the exam.</p></div>';
+      container.innerHTML = '<div class="card" style="text-align:center;color:var(--rose);"><p><i class="fas fa-exclamation-triangle"></i> You need to be enrolled to take the exam.</p></div>';
     }
   }
 

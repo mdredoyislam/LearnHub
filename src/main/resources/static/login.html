@@ -40,8 +40,11 @@
     </div>
 
     <div style="margin-top:1.5rem;padding:1rem;background:rgba(99,102,241,0.06);border-radius:10px;border:1px solid rgba(99,102,241,0.15);">
-      <p class="text-sm text-muted" style="margin-bottom:0.5rem;font-weight:600;color:var(--text-secondary);">Demo Credentials</p>
-      <p class="text-sm text-muted">Register an account to get started as a <strong>Student</strong>.<br/>Ask admin to promote to Teacher/Admin role.</p>
+      <p class="text-sm" style="margin-bottom:0.75rem;font-weight:700;color:var(--text-primary);">Demo Credentials</p>
+      <p class="text-sm text-muted" style="margin-bottom:0.35rem;">Admin: <code>admin@test.com</code></p>
+      <p class="text-sm text-muted" style="margin-bottom:0.35rem;">Teacher: <code>teacher@test.com</code></p>
+      <p class="text-sm text-muted" style="margin-bottom:0.5rem;">Student: <code>student@test.com</code></p>
+      <p class="text-sm" style="color:var(--indigo-light);font-weight:600;">Password: <code>Password123!</code></p>
     </div>
   </div>
 </div>
@@ -49,7 +52,11 @@
 <script src="/js/api.js"></script>
 <script src="/js/auth.js"></script>
 <script>
-  if (isLoggedIn()) redirectToDashboard();
+  // If already logged in, redirect immediately
+  if (isLoggedIn()) {
+    console.log('[LearnHub] Already logged in as:', localStorage.getItem('lh_role'), '— redirecting...');
+    redirectToDashboard();
+  }
 </script>
 </body>
 </html>

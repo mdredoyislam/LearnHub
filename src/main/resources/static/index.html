@@ -31,7 +31,7 @@
   <div class="hero-bg-orb orb2"></div>
   <div class="container">
     <div class="hero-content">
-      <div class="hero-badge">🎓 Advanced Java Lab Project — Southeast University</div>
+      <div class="hero-badge">Advanced Java Lab Project — Southeast University</div>
       <h1 class="hero-title">
         Learn Anything.<br>
         <span class="gradient-text">Achieve Everything.</span>
@@ -71,32 +71,32 @@
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem;">
       <div class="card">
-        <div style="font-size:2.5rem;margin-bottom:1rem;">🔐</div>
+        <div style="font-size:2.5rem;margin-bottom:1rem;color:var(--indigo-light);"><i class="fas fa-shield-alt"></i></div>
         <h3 class="card-title">Role-Based Access</h3>
         <p class="text-sm">Admin, Teacher & Student roles with secure JWT authentication and Spring Security.</p>
       </div>
       <div class="card">
-        <div style="font-size:2.5rem;margin-bottom:1rem;">🎬</div>
+        <div style="font-size:2.5rem;margin-bottom:1rem;color:var(--indigo-light);"><i class="fas fa-video"></i></div>
         <h3 class="card-title">Multi-Format Lessons</h3>
         <p class="text-sm">YouTube embeds, direct video uploads, PDFs, and rich text descriptions per lesson.</p>
       </div>
       <div class="card">
-        <div style="font-size:2.5rem;margin-bottom:1rem;">💳</div>
+        <div style="font-size:2.5rem;margin-bottom:1rem;color:var(--indigo-light);"><i class="fas fa-credit-card"></i></div>
         <h3 class="card-title">Payment-Gated Content</h3>
         <p class="text-sm">Free and paid courses with enrollment system. Unlock premium content after payment.</p>
       </div>
       <div class="card">
-        <div style="font-size:2.5rem;margin-bottom:1rem;">📝</div>
+        <div style="font-size:2.5rem;margin-bottom:1rem;color:var(--indigo-light);"><i class="fas fa-file-signature"></i></div>
         <h3 class="card-title">Exam & Certification</h3>
         <p class="text-sm">Auto-graded exams with certificate generation for students scoring 50%+.</p>
       </div>
       <div class="card">
-        <div style="font-size:2.5rem;margin-bottom:1rem;">📊</div>
+        <div style="font-size:2.5rem;margin-bottom:1rem;color:var(--indigo-light);"><i class="fas fa-chart-line"></i></div>
         <h3 class="card-title">Admin Analytics</h3>
         <p class="text-sm">Revenue dashboards, enrollment counts, and user management for admins.</p>
       </div>
       <div class="card">
-        <div style="font-size:2.5rem;margin-bottom:1rem;">☕</div>
+        <div style="font-size:2.5rem;margin-bottom:1rem;color:var(--indigo-light);"><i class="fas fa-code"></i></div>
         <h3 class="card-title">Spring Boot Backend</h3>
         <p class="text-sm">Pure Java Spring Boot RESTful API with JPA/Hibernate and MySQL database.</p>
       </div>
@@ -114,7 +114,7 @@
     <div class="course-grid" id="courses-grid">
       <!-- Loaded dynamically -->
       <div class="card" style="text-align:center;grid-column:1/-1;padding:3rem;">
-        <div style="font-size:2rem;margin-bottom:0.75rem;">⏳</div>
+        <div style="font-size:2rem;margin-bottom:0.75rem;"><i class="fas fa-spinner fa-spin"></i></div>
         <p>Loading courses...</p>
       </div>
     </div>
@@ -183,7 +183,7 @@
       const grid = document.getElementById('courses-grid');
       if (!courses || courses.length === 0) {
         grid.innerHTML = `<div class="card" style="text-align:center;grid-column:1/-1;padding:3rem;">
-          <div style="font-size:2.5rem;margin-bottom:0.75rem;">📚</div>
+          <div style="font-size:2.5rem;margin-bottom:0.75rem;"><i class="fas fa-book-open"></i></div>
           <h3>No courses yet</h3><p>Be the first to create a course!</p>
           <a href="/register.html" class="btn btn-primary mt-2">Get Started</a></div>`;
         return;
@@ -191,16 +191,16 @@
       grid.innerHTML = courses.map(c => `
         <div class="course-card" onclick="window.location.href='/login.html'">
           <div class="course-card-img">
-            ${c.photo ? `<img src="${c.photo}" alt="${c.courseName}" style="width:100%;height:100%;object-fit:cover;">` : `<div class="placeholder-icon">📖</div>`}
+            ${c.photo ? `<img src="${c.photo}" alt="${c.courseName}" style="width:100%;height:100%;object-fit:cover;">` : `<div class="placeholder-icon"><i class="fas fa-book"></i></div>`}
           </div>
           <div class="course-card-body">
             <div class="course-card-title">${c.courseName}</div>
-            <div class="course-card-teacher">👨‍🏫 ${c.teacherName || 'Unknown'}</div>
+            <div class="course-card-teacher"><i class="fas fa-user-tie"></i> ${c.teacherName || 'Unknown'}</div>
             <div class="course-card-meta">
               ${formatPrice(c.courseAmount, c.free || c.isFree)}
               <div class="course-stats">
-                <span>📹 ${c.lessonCount} lessons</span>
-                <span>👥 ${c.enrollmentCount}</span>
+                <span><i class="fas fa-play-circle"></i> ${c.lessonCount} lessons</span>
+                <span><i class="fas fa-users"></i> ${c.enrollmentCount}</span>
               </div>
             </div>
           </div>

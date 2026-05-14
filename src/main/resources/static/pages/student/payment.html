@@ -31,15 +31,15 @@
           <span>Nagad</span>
         </div>
         <div class="method-opt" onclick="selectMethod('bank', this)">
-          <div style="font-size:1.5rem;">🏦</div>
+          <div style="font-size:1.5rem;"><i class="fas fa-university"></i></div>
           <span>Bank</span>
         </div>
         <div class="method-opt" onclick="selectMethod('cod', this)">
-          <div style="font-size:1.5rem;">🚚</div>
+          <div style="font-size:1.5rem;"><i class="fas fa-truck"></i></div>
           <span>COD</span>
         </div>
         <div class="method-opt" onclick="selectMethod('direct', this)">
-          <div style="font-size:1.5rem;">🤝</div>
+          <div style="font-size:1.5rem;"><i class="fas fa-handshake"></i></div>
           <span>Direct</span>
         </div>
       </div>
@@ -65,7 +65,7 @@
     </div>
 
     <div class="payment-footer">
-      🔒 Secure Enrollment Approval System — Learn Hub
+      <i class="fas fa-lock"></i> Secure Enrollment Approval System — Learn Hub
     </div>
   </div>
 </div>
@@ -123,7 +123,7 @@
 
     const btn = document.getElementById('pay-button');
     btn.disabled = true;
-    btn.innerHTML = '⌛ Submitting...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
 
     try {
       await api.post(`/student/enroll/paid/${courseId}`, {
@@ -131,7 +131,7 @@
         method: currentMethod
       });
 
-      btn.innerHTML = '✅ Request Submitted';
+      btn.innerHTML = '<i class="fas fa-check-circle"></i> Request Submitted';
       btn.style.background = '#10b981';
 
       setTimeout(() => {

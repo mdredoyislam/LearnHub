@@ -18,14 +18,14 @@
   <div class="logo">Learn<span>Hub</span></div>
   <div style="display:flex;gap:1rem;">
     <a href="/pages/student/dashboard.html" class="btn btn-secondary btn-sm">← Dashboard</a>
-    <button onclick="window.print()" class="btn btn-primary btn-sm">🖨️ Print Certificate</button>
+    <button onclick="window.print()" class="btn btn-primary btn-sm"><i class="fas fa-print"></i> Print Certificate</button>
   </div>
 </div></nav>
 
 <div style="padding-top:100px;padding-bottom:3rem;padding-left:1.5rem;padding-right:1.5rem;" id="cert-outer">
   <div class="certificate-wrap">
     <div style="text-align:center;margin-bottom:1.5rem;" class="no-print">
-      <span class="badge badge-success" style="font-size:0.9rem;padding:0.5rem 1.25rem;">🏆 Certificate of Completion</span>
+      <span class="badge badge-success" style="font-size:0.9rem;padding:0.5rem 1.25rem;"><i class="fas fa-award"></i> Certificate of Completion</span>
     </div>
     <div class="certificate" id="certificate">
       <div class="certificate-logo">Learn<span style="background:linear-gradient(135deg,#6366f1,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Hub</span></div>
@@ -41,7 +41,7 @@
       <div class="certificate-course" id="cert-course">—</div>
 
       <div class="certificate-score" id="cert-score">
-        ✅ Score: —%
+        Score: —%
       </div>
 
       <p style="color:var(--text-muted);font-size:0.85rem;max-width:500px;margin:0 auto 2rem;">
@@ -56,7 +56,7 @@
           <div class="cert-sign-label">Course Instructor</div>
         </div>
         <div style="text-align:center;">
-          <div style="font-size:2rem;margin-bottom:0.25rem;">🏆</div>
+          <div style="font-size:2rem;margin-bottom:0.25rem;"><i class="fas fa-award"></i></div>
           <div style="font-size:0.75rem;color:var(--text-muted);" id="cert-date">—</div>
         </div>
         <div class="cert-sign">
@@ -69,7 +69,7 @@
 
     <div style="text-align:center;margin-top:1.5rem;" class="no-print">
       <p class="text-sm text-muted">Certificate ID: <code id="cert-id" style="color:var(--indigo-light);">—</code></p>
-      <button onclick="window.print()" class="btn btn-primary mt-2">🖨️ Download / Print</button>
+      <button onclick="window.print()" class="btn btn-primary mt-2"><i class="fas fa-download"></i> Download / Print</button>
     </div>
   </div>
 </div>
@@ -92,7 +92,7 @@
       if (!result.certificateEligible) {
         document.getElementById('cert-outer').innerHTML = `
           <div style="text-align:center;padding:5rem 1rem;">
-            <div style="font-size:4rem;margin-bottom:1rem;">😔</div>
+            <div style="font-size:4rem;margin-bottom:1rem;color:var(--rose);"><i class="fas fa-times-circle"></i></div>
             <h2 style="margin-bottom:0.75rem;">Certificate Not Available</h2>
             <p class="text-muted mb-3">You need to score 50% or above to earn a certificate.<br>Your score: <strong style="color:var(--rose);">${result.examMark}%</strong></p>
             <a href="/pages/student/dashboard.html" class="btn btn-primary">Back to Dashboard</a>
@@ -103,7 +103,7 @@
       document.title = `Certificate — ${course.courseName} — Learn Hub`;
       document.getElementById('cert-name').textContent = result.studentName;
       document.getElementById('cert-course').textContent = course.courseName;
-      document.getElementById('cert-score').innerHTML = `✅ Score: ${result.examMark}% · Passed`;
+      document.getElementById('cert-score').innerHTML = `Score: ${result.examMark}% · Passed`;
       document.getElementById('cert-teacher').textContent = course.teacherName || 'Course Instructor';
       document.getElementById('cert-date').textContent = `Completed: ${formatDate(result.submittedAt)}`;
       document.getElementById('cert-id').textContent = `LH-${result.examId}-${courseId}-${Date.now().toString(36).toUpperCase()}`;
@@ -111,7 +111,7 @@
     } catch(e) {
       document.getElementById('cert-outer').innerHTML = `
         <div style="text-align:center;padding:5rem 1rem;">
-          <div style="font-size:4rem;margin-bottom:1rem;">⚠️</div>
+          <div style="font-size:4rem;margin-bottom:1rem;color:var(--amber);"><i class="fas fa-exclamation-triangle"></i></div>
           <h2 style="margin-bottom:0.75rem;">Exam Not Found</h2>
           <p class="text-muted mb-3">You haven't taken the exam for this course yet.</p>
           <a href="/pages/student/course-detail.html?courseId=${courseId}" class="btn btn-primary">Go to Course</a>

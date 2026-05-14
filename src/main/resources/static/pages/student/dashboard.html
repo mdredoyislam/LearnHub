@@ -16,12 +16,12 @@
   </div>
 </div></nav>
 
-<div class="dash-container container">
+<div class="dash-container">
   <aside class="sidebar">
     <div class="sidebar-menu">
-      <a href="#" class="active" onclick="switchTab('browse')">📚 Browse Courses</a>
-      <a href="#" onclick="switchTab('history')">🎓 My Learning</a>
-      <a href="#" onclick="switchTab('profile')">⚙️ Profile Settings</a>
+      <a href="#" class="active" onclick="switchTab('browse')"><i class="fas fa-search"></i> Browse Courses</a>
+      <a href="#" onclick="switchTab('history')"><i class="fas fa-graduation-cap"></i> My Learning</a>
+      <a href="#" onclick="switchTab('profile')"><i class="fas fa-user-cog"></i> Profile Settings</a>
     </div>
   </aside>
 
@@ -33,7 +33,7 @@
         <h1 class="dash-title">Explore Courses</h1>
         <div style="display:flex;gap:1rem;">
           <input type="text" id="search-courses" class="form-control" placeholder="Search courses..." style="width:250px;"/>
-          <button onclick="loadCourses()" class="btn btn-secondary btn-sm">🔄 Refresh</button>
+          <button onclick="loadCourses()" class="btn btn-secondary btn-sm"><i class="fas fa-sync-alt"></i> Refresh</button>
         </div>
       </div>
       <div class="dash-grid" id="browse-grid">
@@ -66,7 +66,7 @@
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
         <div class="card">
-          <h3 class="card-title mb-3">⚙️ Account Settings</h3>
+          <h3 class="card-title mb-3"><i class="fas fa-cog"></i> Account Settings</h3>
           <form id="profile-form">
             <div class="form-group">
               <label class="form-label">Full Name</label>
@@ -80,7 +80,7 @@
           </form>
         </div>
         <div class="card">
-          <h3 class="card-title mb-3">🔒 Change Password</h3>
+          <h3 class="card-title mb-3"><i class="fas fa-lock"></i> Change Password</h3>
           <form id="password-form">
             <div class="form-group">
               <label class="form-label">Old Password</label>
@@ -168,7 +168,7 @@
         actionBtn = `<button onclick="window.location.href='/pages/student/course-detail.html?courseId=${c.coursesId}'" class="btn btn-primary btn-full mt-2">Continue Learning</button>`;
       } else if (enrollInfo.status === 'PENDING') {
         statusBadge = '<span class="badge badge-amber" style="position:absolute;top:1rem;right:1rem;z-index:2;">Pending Approval</span>';
-        actionBtn = `<button class="btn btn-secondary btn-full mt-2" disabled>⌛ Processing Payment</button>`;
+        actionBtn = `<button class="btn btn-secondary btn-full mt-2" disabled><i class="fas fa-clock"></i> Processing Payment</button>`;
       } else if (enrollInfo.status === 'REJECTED') {
         statusBadge = '<span class="badge badge-danger" style="position:absolute;top:1rem;right:1rem;z-index:2;">Payment Rejected</span>';
         actionBtn = `<button onclick="openEnrollModal(${c.coursesId}, '${c.courseName}', ${c.free})" class="btn btn-primary btn-full mt-2">Try Again</button>`;
@@ -179,7 +179,7 @@
       const cardHtml = `
         <div class="course-card-img">
           ${statusBadge}
-          ${c.photo ? `<img src="${c.photo}" alt="${c.courseName}" style="width:100%;height:100%;object-fit:cover;">` : '<div class="placeholder-icon">📚</div>'}
+          ${c.photo ? `<img src="${c.photo}" alt="${c.courseName}" style="width:100%;height:100%;object-fit:cover;">` : '<div class="placeholder-icon"><i class="fas fa-book"></i></div>'}
         </div>
         <div class="course-card-body">
           <div class="course-card-teacher">${c.teacherName}</div>
@@ -208,10 +208,10 @@
     });
 
     if (allCourses.length === 0) {
-      browseGrid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;"><div style="font-size:2.5rem;">📭</div><p>No courses available right now.</p></div>';
+      browseGrid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;"><div style="font-size:2.5rem;color:var(--text-muted);"><i class="fas fa-inbox"></i></div><p>No courses available right now.</p></div>';
     }
     if (!hasHistory) {
-      historyGrid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;"><div style="font-size:2.5rem;">📭</div><p>You have not enrolled in any courses yet.</p></div>';
+      historyGrid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;"><div style="font-size:2.5rem;color:var(--text-muted);"><i class="fas fa-inbox"></i></div><p>You have not enrolled in any courses yet.</p></div>';
     }
   }
 
@@ -236,7 +236,7 @@
 
     try {
       await api.post(`/student/enroll/free/${id}`, {});
-      showToast('Enrolled successfully! 🎉', 'success');
+      showToast('Enrolled successfully!', 'success');
       closeModal('enroll-modal');
       loadCourses();
     } catch(e) { showToast(e.message, 'error'); }
