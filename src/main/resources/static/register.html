@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Account — Learn Hub</title>
+  <meta name="description" content="Join Learn Hub and start learning today. Create your free student account."/>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+<div class="hero-bg-orb orb1" style="position:fixed;"></div>
+<div class="hero-bg-orb orb2" style="position:fixed;"></div>
+
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="logo">Learn<span>Hub</span></div>
+      <p class="auth-subtitle" style="margin-top:0.5rem;margin-bottom:0;">Join thousands of learners today 🚀</p>
+    </div>
+
+    <form id="register-form" onsubmit="handleRegister(event)" style="margin-top:1.5rem;">
+      <div class="form-group">
+        <label class="form-label" for="fullName">Full Name</label>
+        <input type="text" id="fullName" class="form-control" placeholder="Your full name" required minlength="2"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="email">Email Address</label>
+        <input type="email" id="email" class="form-control" placeholder="you@example.com" required/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="phone">Phone Number <span style="color:var(--text-muted);">(optional)</span></label>
+        <input type="tel" id="phone" class="form-control" placeholder="+880 1xxx-xxxxxx"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input type="password" id="password" class="form-control" placeholder="Minimum 6 characters" required minlength="6"/>
+      </div>
+      <button type="submit" id="register-btn" class="btn btn-primary btn-full btn-lg" style="margin-top:0.5rem;">
+        Create Account
+      </button>
+    </form>
+
+    <div class="auth-divider">or</div>
+
+    <div style="text-align:center;font-size:0.9rem;color:var(--text-muted);">
+      Already have an account?
+      <a href="/login.html" style="color:var(--indigo-light);font-weight:600;margin-left:0.25rem;">Sign in</a>
+    </div>
+
+    <p class="text-sm text-muted" style="margin-top:1.25rem;text-align:center;line-height:1.6;">
+      By creating an account, you agree to Learn Hub's Terms of Service.
+      New accounts are registered as <strong style="color:var(--text-secondary);">Student</strong> by default.
+    </p>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+  if (isLoggedIn()) redirectToDashboard();
+</script>
+</body>
+</html>

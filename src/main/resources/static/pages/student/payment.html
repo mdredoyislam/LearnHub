@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Payment Gateway — Learn Hub</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+
+<div class="payment-page">
+  <div class="payment-card">
+    <div class="payment-header" id="gw-header">
+      <h3 id="gw-title">Manual Payment</h3>
+    </div>
+
+    <div class="payment-body">
+      <div style="text-align:center;margin-bottom:1.5rem;">
+        <div style="font-size:0.85rem;color:#666;margin-bottom:0.25rem;">Amount to Pay</div>
+        <div style="font-size:1.8rem;font-weight:800;color:#333;" id="pay-amount">৳0.00</div>
+        <div style="font-size:0.9rem;font-weight:600;color:var(--indigo-light);margin-top:0.25rem;" id="course-name">Course Name</div>
+      </div>
+
+      <div class="method-selector" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="method-opt active" onclick="selectMethod('bkash', this)">
+          <img src="https://www.logo.wine/a/logo/BKash/BKash-Logo.wine.svg" alt="bKash"/>
+          <span>bKash</span>
+        </div>
+        <div class="method-opt" onclick="selectMethod('nagad', this)">
+          <img src="https://download.logo.wine/logo/Nagad/Nagad-Logo.wine.png" alt="Nagad"/>
+          <span>Nagad</span>
+        </div>
+        <div class="method-opt" onclick="selectMethod('bank', this)">
+          <div style="font-size:1.5rem;">🏦</div>
+          <span>Bank</span>
+        </div>
+        <div class="method-opt" onclick="selectMethod('cod', this)">
+          <div style="font-size:1.5rem;">🚚</div>
+          <span>COD</span>
+        </div>
+        <div class="method-opt" onclick="selectMethod('direct', this)">
+          <div style="font-size:1.5rem;">🤝</div>
+          <span>Direct</span>
+        </div>
+      </div>
+
+      <div id="payment-instructions" style="background:#f8f9fa;padding:1rem;border-radius:10px;margin-bottom:1.5rem;font-size:0.85rem;line-height:1.4;">
+        <p id="instr-text">Please send money to <strong>01700000000</strong> (Personal) and enter the Transaction ID below.</p>
+      </div>
+
+      <div id="payment-fields">
+        <div class="payment-input-group">
+          <label>Transaction ID / Reference *</label>
+          <input type="text" class="payment-input" placeholder="e.g. TR123456789" id="pay-trxid"/>
+        </div>
+      </div>
+
+      <button class="pay-btn" id="pay-button" onclick="processPayment()">
+        Submit Payment Details
+      </button>
+
+      <div style="text-align:center;margin-top:1.5rem;">
+        <a href="/pages/student/dashboard.html" style="color:#999;font-size:0.85rem;text-decoration:none;">✕ Cancel and Return</a>
+      </div>
+    </div>
+
+    <div class="payment-footer">
+      🔒 Secure Enrollment Approval System — Learn Hub
+    </div>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+  requireAuth('STUDENT');
+  const params = new URLSearchParams(window.location.search);
+  const courseId = params.get('courseId');
+  const amount = params.get('amount');
+  const name = params.get('name');
+
+  if (!courseId || !amount) window.location.href = '/pages/student/dashboard.html';
+
+  document.getElementById('pay-amount').textContent = '৳' + parseFloat(amount).toFixed(2);
+  document.getElementById('course-name').textContent = decodeURIComponent(name);
+
+  let currentMethod = 'bkash';
+
+  const instructions = {
+    bkash: 'Please send money to <strong>01700000000</strong> (bKash Personal) and enter the Transaction ID below.',
+    nagad: 'Please send money to <strong>01700000000</strong> (Nagad Personal) and enter the Transaction ID below.',
+    bank: 'Bank: DBBL, A/C: 123456789, Branch: Dhaka. Submit deposit slip reference below.',
+    cod: 'Pay upon course material delivery. Enter "COD Request" as Transaction ID.',
+    direct: 'Pay directly at our office. Enter "Office Pay" as Transaction ID.'
+  };
+
+  function selectMethod(method, el) {
+    currentMethod = method;
+    document.querySelectorAll('.method-opt').forEach(o => o.classList.remove('active', 'nagad-active'));
+    
+    const header = document.getElementById('gw-header');
+    const btn = document.getElementById('pay-button');
+    const instr = document.getElementById('instr-text');
+
+    el.classList.add('active');
+    instr.innerHTML = instructions[method] || '';
+
+    if (method === 'bkash') header.style.background = '#e2136e';
+    else if (method === 'nagad') header.style.background = '#f7941d';
+    else header.style.background = 'var(--indigo)';
+    
+    btn.style.background = header.style.background;
+    document.getElementById('gw-title').textContent = method.toUpperCase() + ' Payment';
+  }
+
+  async function processPayment() {
+    const trxId = document.getElementById('pay-trxid').value;
+
+    if (!trxId) {
+      alert('Please enter your Transaction ID or Reference');
+      return;
+    }
+
+    const btn = document.getElementById('pay-button');
+    btn.disabled = true;
+    btn.innerHTML = '⌛ Submitting...';
+
+    try {
+      await api.post(`/student/enroll/paid/${courseId}`, {
+        transactionId: trxId,
+        method: currentMethod
+      });
+
+      btn.innerHTML = '✅ Request Submitted';
+      btn.style.background = '#10b981';
+
+      setTimeout(() => {
+        window.location.href = `/pages/student/dashboard.html?pending=true`;
+      }, 1500);
+
+    } catch(e) {
+      alert(e.message);
+      btn.disabled = false;
+      btn.innerHTML = `Submit Payment Details`;
+    }
+  }
+</script>
+</body>
+</html>

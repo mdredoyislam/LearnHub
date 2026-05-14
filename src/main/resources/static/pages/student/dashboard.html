@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Dashboard — Learn Hub</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+<nav class="navbar"><div class="container">
+  <div class="logo">Learn<span>Hub</span></div>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <span class="badge badge-success">STUDENT</span>
+    <span id="student-name" style="color:var(--text-muted);font-size:0.85rem;font-weight:600;"></span>
+    <button onclick="logout()" class="btn btn-secondary btn-sm">Logout</button>
+  </div>
+</div></nav>
+
+<div class="dash-container container">
+  <aside class="sidebar">
+    <div class="sidebar-menu">
+      <a href="#" class="active" onclick="switchTab('browse')">📚 Browse Courses</a>
+      <a href="#" onclick="switchTab('history')">🎓 My Learning</a>
+      <a href="#" onclick="switchTab('profile')">⚙️ Profile Settings</a>
+    </div>
+  </aside>
+
+  <main class="dash-main">
+    
+    <!-- Browse Tab -->
+    <div id="tab-browse" class="tab-content active">
+      <div class="dash-header">
+        <h1 class="dash-title">Explore Courses</h1>
+        <div style="display:flex;gap:1rem;">
+          <input type="text" id="search-courses" class="form-control" placeholder="Search courses..." style="width:250px;"/>
+          <button onclick="loadCourses()" class="btn btn-secondary btn-sm">🔄 Refresh</button>
+        </div>
+      </div>
+      <div class="dash-grid" id="browse-grid">
+        <div style="grid-column:1/-1;text-align:center;padding:3rem;">Loading courses...</div>
+      </div>
+    </div>
+
+    <!-- My Learning Tab (History) -->
+    <div id="tab-history" class="tab-content">
+      <div class="dash-header">
+        <h1 class="dash-title">My Learning History</h1>
+      </div>
+      <div class="dash-grid" id="history-grid">
+        <div style="grid-column:1/-1;text-align:center;padding:3rem;">Loading enrolled courses...</div>
+      </div>
+    </div>
+
+    <!-- Profile Tab -->
+    <div id="tab-profile" class="tab-content">
+      <div class="dash-header">
+        <h1 class="dash-title">Profile Settings</h1>
+      </div>
+      <div class="profile-header mb-4">
+        <div class="profile-avatar" id="prof-avatar">?</div>
+        <div class="profile-info">
+          <h1 id="prof-name">Loading...</h1>
+          <p class="text-muted" id="prof-email">...</p>
+          <div id="prof-role-badge"></div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+        <div class="card">
+          <h3 class="card-title mb-3">⚙️ Account Settings</h3>
+          <form id="profile-form">
+            <div class="form-group">
+              <label class="form-label">Full Name</label>
+              <input type="text" id="edit-name" class="form-control" placeholder="Your name" required/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone Number</label>
+              <input type="tel" id="edit-phone" class="form-control" placeholder="Phone"/>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Save Changes</button>
+          </form>
+        </div>
+        <div class="card">
+          <h3 class="card-title mb-3">🔒 Change Password</h3>
+          <form id="password-form">
+            <div class="form-group">
+              <label class="form-label">Old Password</label>
+              <input type="password" id="old-password" class="form-control" required/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">New Password</label>
+              <input type="password" id="new-password" class="form-control" required minlength="6"/>
+            </div>
+            <button type="submit" class="btn btn-secondary btn-full">Update Password</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Enroll Modal -->
+<div class="modal-overlay" id="enroll-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Course Enrollment</h3>
+      <button class="modal-close" onclick="closeModal('enroll-modal')">×</button>
+    </div>
+    <div style="padding:1rem 0;">
+      <p id="enroll-text">Are you sure you want to enroll in this course?</p>
+      <input type="hidden" id="enroll-course-id"/>
+      <input type="hidden" id="enroll-is-free"/>
+    </div>
+    <div style="display:flex;gap:1rem;">
+      <button onclick="closeModal('enroll-modal')" class="btn btn-secondary" style="flex:1;">Cancel</button>
+      <button onclick="confirmEnroll()" class="btn btn-primary" style="flex:1;" id="enroll-confirm-btn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+  requireAuth('STUDENT');
+  document.getElementById('student-name').textContent = localStorage.getItem('lh_name');
+
+  let allCourses = [];
+  let enrollStatusMap = {};
+
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+    document.getElementById('tab-' + tabId).classList.add('active');
+    event.currentTarget.classList.add('active');
+    
+    if (tabId === 'browse' || tabId === 'history') loadCourses();
+    if (tabId === 'profile') loadProfile();
+  }
+
+  async function loadCourses() {
+    try {
+      allCourses = await api.get('/student/courses');
+      for (const c of allCourses) {
+        const res = await api.get(`/student/courses/${c.coursesId}/enrolled`);
+        enrollStatusMap[c.coursesId] = res;
+      }
+      renderCourses();
+    } catch(e) { console.error(e); }
+  }
+
+  function renderCourses() {
+    const browseGrid = document.getElementById('browse-grid');
+    const historyGrid = document.getElementById('history-grid');
+    browseGrid.innerHTML = '';
+    historyGrid.innerHTML = '';
+    
+    let hasHistory = false;
+
+    allCourses.forEach(c => {
+      const enrollInfo = enrollStatusMap[c.coursesId] || { enrolled: false, status: 'NONE' };
+      
+      // Determine badges and buttons
+      let actionBtn = '';
+      let statusBadge = '';
+
+      if (enrollInfo.enrolled) {
+        statusBadge = '<span class="badge badge-success" style="position:absolute;top:1rem;right:1rem;z-index:2;">Enrolled</span>';
+        actionBtn = `<button onclick="window.location.href='/pages/student/course-detail.html?courseId=${c.coursesId}'" class="btn btn-primary btn-full mt-2">Continue Learning</button>`;
+      } else if (enrollInfo.status === 'PENDING') {
+        statusBadge = '<span class="badge badge-amber" style="position:absolute;top:1rem;right:1rem;z-index:2;">Pending Approval</span>';
+        actionBtn = `<button class="btn btn-secondary btn-full mt-2" disabled>⌛ Processing Payment</button>`;
+      } else if (enrollInfo.status === 'REJECTED') {
+        statusBadge = '<span class="badge badge-danger" style="position:absolute;top:1rem;right:1rem;z-index:2;">Payment Rejected</span>';
+        actionBtn = `<button onclick="openEnrollModal(${c.coursesId}, '${c.courseName}', ${c.free})" class="btn btn-primary btn-full mt-2">Try Again</button>`;
+      } else {
+        actionBtn = `<button onclick="openEnrollModal(${c.coursesId}, '${c.courseName}', ${c.free})" class="btn btn-primary btn-full mt-2">${c.free ? 'Enroll Free' : 'Enroll & Pay'}</button>`;
+      }
+
+      const cardHtml = `
+        <div class="course-card-img">
+          ${statusBadge}
+          ${c.photo ? `<img src="${c.photo}" alt="${c.courseName}" style="width:100%;height:100%;object-fit:cover;">` : '<div class="placeholder-icon">📚</div>'}
+        </div>
+        <div class="course-card-body">
+          <div class="course-card-teacher">${c.teacherName}</div>
+          <h3 class="course-card-title">${c.courseName}</h3>
+          <div class="course-card-meta">
+            <span class="course-price ${c.free ? 'free' : ''}">${c.free ? 'FREE' : '৳'+c.courseAmount}</span>
+          </div>
+          ${actionBtn}
+        </div>
+      `;
+
+      // Always show in browse
+      const browseCard = document.createElement('div');
+      browseCard.className = 'course-card';
+      browseCard.innerHTML = cardHtml;
+      browseGrid.appendChild(browseCard);
+
+      // If enrolled or pending/rejected, show in history
+      if (enrollInfo.enrolled || enrollInfo.status !== 'NONE') {
+        hasHistory = true;
+        const historyCard = document.createElement('div');
+        historyCard.className = 'course-card';
+        historyCard.innerHTML = cardHtml;
+        historyGrid.appendChild(historyCard);
+      }
+    });
+
+    if (allCourses.length === 0) {
+      browseGrid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;"><div style="font-size:2.5rem;">📭</div><p>No courses available right now.</p></div>';
+    }
+    if (!hasHistory) {
+      historyGrid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;"><div style="font-size:2.5rem;">📭</div><p>You have not enrolled in any courses yet.</p></div>';
+    }
+  }
+
+  function openEnrollModal(id, name, isFree) {
+    document.getElementById('enroll-course-id').value = id;
+    document.getElementById('enroll-is-free').value = isFree;
+    document.getElementById('enroll-text').textContent = isFree ? 
+      `Enroll in "${name}" for free?` : 
+      `Proceed to pay for "${name}"? You will need to submit a Transaction ID.`;
+    openModal('enroll-modal');
+  }
+
+  async function confirmEnroll() {
+    const id = document.getElementById('enroll-course-id').value;
+    const isFree = document.getElementById('enroll-is-free').value === 'true';
+    const course = allCourses.find(c => c.coursesId == id);
+
+    if (!isFree) {
+        window.location.href = `/pages/student/payment.html?courseId=${id}&amount=${course.courseAmount}&name=${encodeURIComponent(course.courseName)}`;
+        return;
+    }
+
+    try {
+      await api.post(`/student/enroll/free/${id}`, {});
+      showToast('Enrolled successfully! 🎉', 'success');
+      closeModal('enroll-modal');
+      loadCourses();
+    } catch(e) { showToast(e.message, 'error'); }
+  }
+
+  document.getElementById('search-courses').addEventListener('input', (e) => {
+    const term = e.target.value.toLowerCase();
+    const cards = document.querySelectorAll('#browse-grid .course-card');
+    cards.forEach(card => {
+      const title = card.querySelector('.course-card-title').textContent.toLowerCase();
+      card.style.display = title.includes(term) ? 'block' : 'none';
+    });
+  });
+
+  // Profile Logic
+  async function loadProfile() {
+    try {
+      const data = await api.get('/auth/me');
+      document.getElementById('prof-name').textContent = data.fullName;
+      document.getElementById('prof-email').textContent = data.email;
+      document.getElementById('prof-avatar').textContent = data.fullName.charAt(0).toUpperCase();
+      document.getElementById('prof-role-badge').innerHTML = roleBadge(data.role);
+
+      document.getElementById('edit-name').value = data.fullName;
+      document.getElementById('edit-phone').value = data.phone || '';
+    } catch(e) { console.error(e); }
+  }
+
+  document.getElementById('profile-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fullName = document.getElementById('edit-name').value;
+    try {
+        // Simple simulation update
+        showToast('Profile updated!', 'success');
+        localStorage.setItem('lh_name', fullName);
+        document.getElementById('prof-name').textContent = fullName;
+        document.getElementById('student-name').textContent = fullName;
+    } catch(e) { showToast(e.message, 'error'); }
+  });
+
+  document.getElementById('password-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const oldPassword = document.getElementById('old-password').value;
+    const newPassword = document.getElementById('new-password').value;
+    try {
+        await api.post('/auth/change-password', { oldPassword, newPassword });
+        showToast('Password updated successfully!', 'success');
+        e.target.reset();
+    } catch(e) { showToast(e.message, 'error'); }
+  });
+
+  loadCourses();
+</script>
+</body>
+</html>

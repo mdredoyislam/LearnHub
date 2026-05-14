@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Course — Learn Hub</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+<nav class="navbar"><div class="container">
+  <div class="logo">Learn<span>Hub</span></div>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <a href="/pages/student/dashboard.html" class="btn btn-secondary btn-sm">← My Courses</a>
+    <button onclick="logout()" class="btn btn-secondary btn-sm">Logout</button>
+  </div>
+</div></nav>
+
+<div style="padding-top:90px;max-width:1000px;margin:0 auto;padding-left:1.5rem;padding-right:1.5rem;padding-bottom:4rem;">
+
+  <!-- Course Header -->
+  <div class="card mb-3" id="course-header">
+    <div style="color:var(--text-muted);">Loading course...</div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active" data-tab="lessons-tab" onclick="switchTab(this,'lessons-tab')">📹 Lessons</div>
+    <div class="tab" data-tab="exam-tab" onclick="switchTab(this,'exam-tab')">📝 Exam</div>
+  </div>
+
+  <!-- Lessons -->
+  <div id="lessons-tab" class="tab-content active">
+    <div id="lessons-container">
+      <div style="text-align:center;padding:2rem;color:var(--text-muted);">Loading lessons...</div>
+    </div>
+  </div>
+
+  <!-- Exam -->
+  <div id="exam-tab" class="tab-content">
+    <div id="exam-container">
+      <div style="text-align:center;padding:2rem;color:var(--text-muted);">Loading exam...</div>
+    </div>
+  </div>
+
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+  requireAuth('STUDENT');
+  const params = new URLSearchParams(window.location.search);
+  const courseId = params.get('courseId');
+  if (!courseId) window.location.href = '/pages/student/dashboard.html';
+
+  function switchTab(el, tabId) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+    if (tabId === 'exam-tab') loadExam();
+  }
+
+  async function init() {
+    try {
+      const course = await api.get(`/student/courses/${courseId}`);
+      document.title = `${course.courseName} — Learn Hub`;
+      document.getElementById('course-header').innerHTML = `
+        <div style="display:flex;gap:1.5rem;flex-wrap:wrap;align-items:flex-start;">
+          <div style="flex:1;min-width:200px;">
+            <h2 style="margin-bottom:0.5rem;">${course.courseName}</h2>
+            <p class="text-sm text-muted mb-2">👨‍🏫 ${course.teacherName}</p>
+            <p style="color:var(--text-secondary);font-size:0.9rem;">${course.description||''}</p>
+            <div style="display:flex;gap:1rem;margin-top:1rem;flex-wrap:wrap;">
+              <span class="badge badge-primary">📹 ${course.lessonCount} Lessons</span>
+              <span class="badge badge-primary">❓ ${course.quizCount} Questions</span>
+              ${course.pdfBook ? `<a href="${course.pdfBook}" target="_blank" class="badge badge-amber">📄 Download PDF</a>` : ''}
+            </div>
+          </div>
+        </div>`;
+      loadLessons();
+    } catch(e) { showToast('Failed to load course', 'error'); }
+  }
+
+  let activeLesson = null;
+  async function loadLessons() {
+    try {
+      const lessons = await api.get(`/student/courses/${courseId}/lessons`);
+      const container = document.getElementById('lessons-container');
+      if (!lessons || lessons.length === 0) {
+        container.innerHTML = '<div class="card" style="text-align:center;"><p>No lessons have been added yet.</p></div>';
+        return;
+      }
+      container.innerHTML = lessons.map((l, i) => `
+        <div class="card mb-2" style="cursor:pointer;" onclick="playLesson(${i})">
+          <div style="display:flex;align-items:center;gap:1rem;">
+            <div style="width:40px;height:40px;border-radius:10px;background:rgba(99,102,241,0.15);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--indigo-light);flex-shrink:0;">${i+1}</div>
+            <div style="flex:1;">
+              <div style="font-weight:600;">${l.lessonTitle}</div>
+              <div class="text-sm text-muted">${l.videoType === 'YOUTUBE' ? '▶ YouTube Video' : '🎞 Video'}</div>
+            </div>
+            <div style="color:var(--indigo-light);">▶</div>
+          </div>
+          <div id="player-${i}" class="hidden" style="margin-top:1rem;">
+            ${l.videoType === 'YOUTUBE' && l.videoUrl
+              ? `<div class="video-container"><iframe src="${getYouTubeEmbed(l.videoUrl)}" allowfullscreen></iframe></div>`
+              : l.videoUrl ? `<video controls style="width:100%;border-radius:10px;"><source src="${l.videoUrl}"></video>` : '<p class="text-muted" style="text-align:center;padding:1rem;">No video available.</p>'
+            }
+            ${l.description ? `<div class="card mt-2" style="background:rgba(99,102,241,0.05);"><p style="font-size:0.9rem;">${l.description}</p></div>` : ''}
+          </div>
+        </div>`).join('');
+    } catch(e) {
+      document.getElementById('lessons-container').innerHTML = '<div class="card" style="text-align:center;color:var(--rose);"><p>⚠️ You need to be enrolled to view lessons.</p><a href="/pages/student/dashboard.html" class="btn btn-secondary btn-sm mt-2">Go to Dashboard</a></div>';
+    }
+  }
+
+  function playLesson(i) {
+    if (activeLesson === i) {
+      document.getElementById(`player-${i}`).classList.add('hidden');
+      activeLesson = null;
+    } else {
+      if (activeLesson !== null) document.getElementById(`player-${activeLesson}`)?.classList.add('hidden');
+      document.getElementById(`player-${i}`).classList.remove('hidden');
+      activeLesson = i;
+    }
+  }
+
+  function getYouTubeEmbed(url) {
+    const match = url.match(/(?:v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    return match ? `https://www.youtube.com/embed/${match[1]}` : url;
+  }
+
+  async function loadExam() {
+    const container = document.getElementById('exam-container');
+    // Check if already taken
+    try {
+      const result = await api.get(`/student/exam/${courseId}/result`);
+      container.innerHTML = `
+        <div class="card" style="text-align:center;padding:2rem;">
+          <div style="font-size:3rem;margin-bottom:1rem;">${result.passed ? '🎉' : '😔'}</div>
+          <h3 style="margin-bottom:0.75rem;">Exam ${result.passed ? 'Passed!' : 'Not Passed'}</h3>
+          <div style="font-size:2rem;font-weight:700;margin-bottom:0.5rem;" class="${result.passed?'text-emerald':'text-rose'}">${result.examMark}%</div>
+          <p class="text-muted mb-3">Score: ${result.examMark} out of 100 · ${result.totalQuestions} questions</p>
+          ${result.certificateEligible ? `<a href="/pages/student/certificate.html?courseId=${courseId}" class="btn btn-success btn-lg">🏆 View Certificate</a>` : '<p class="text-sm text-muted">You need 50% or above to earn a certificate.</p>'}
+        </div>`;
+      return;
+    } catch(e) { /* not taken yet */ }
+
+    // Load questions
+    try {
+      const quiz = await api.get(`/student/courses/${courseId}/quiz`);
+      if (!quiz || quiz.length === 0) {
+        container.innerHTML = '<div class="card" style="text-align:center;"><p>No exam questions available for this course.</p></div>';
+        return;
+      }
+      let html = `<div style="margin-bottom:1.5rem;"><h3>📝 Course Exam</h3><p class="text-muted text-sm">${quiz.length} questions · Answer all to submit</p></div>`;
+      html += quiz.map((q, i) => `
+        <div class="quiz-question">
+          <div class="quiz-q-text">Q${i+1}. ${q.question}</div>
+          <div class="quiz-options">
+            ${['A','B','C'].filter(opt => q['option'+opt]).map(opt => `
+              <label class="quiz-option" for="q${q.quizId}-${opt}">
+                <input type="radio" id="q${q.quizId}-${opt}" name="q${q.quizId}" value="${opt}" onchange="this.closest('.quiz-options').querySelectorAll('.quiz-option').forEach(o=>o.classList.remove('selected'));this.closest('.quiz-option').classList.add('selected')"/>
+                <span><strong>${opt}.</strong> ${q['option'+opt]}</span>
+              </label>`).join('')}
+          </div>
+        </div>`).join('');
+      html += `<button onclick="submitExam(${JSON.stringify(quiz.map(q=>q.quizId))})" class="btn btn-primary btn-lg" style="margin-top:1rem;">Submit Exam →</button>`;
+      container.innerHTML = html;
+    } catch(e) {
+      container.innerHTML = '<div class="card" style="text-align:center;color:var(--rose);"><p>⚠️ You need to be enrolled to take the exam.</p></div>';
+    }
+  }
+
+  async function submitExam(quizIds) {
+    const answers = {};
+    let allAnswered = true;
+    quizIds.forEach(id => {
+      const sel = document.querySelector(`input[name="q${id}"]:checked`);
+      if (sel) answers[id] = sel.value;
+      else allAnswered = false;
+    });
+    if (!allAnswered) { showToast('Please answer all questions before submitting.', 'error'); return; }
+    try {
+      const result = await api.post('/student/exam/submit', { courseId: parseInt(courseId), answers });
+      showToast(`Exam submitted! Score: ${result.examMark}%`, result.passed ? 'success' : 'info');
+      loadExam();
+    } catch(e) { showToast(e.message, 'error'); }
+  }
+
+  init();
+</script>
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Course Editor — Learn Hub</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+<nav class="navbar"><div class="container">
+  <div class="logo">Learn<span>Hub</span></div>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <a href="/pages/teacher/dashboard.html" class="btn btn-secondary btn-sm">← Back to Dashboard</a>
+    <button onclick="logout()" class="btn btn-secondary btn-sm">Logout</button>
+  </div>
+</div></nav>
+
+<div style="padding-top:90px;max-width:900px;margin:0 auto;padding-left:1.5rem;padding-right:1.5rem;padding-bottom:3rem;">
+
+  <h1 class="dash-title mb-3" id="page-title">New Course</h1>
+
+  <!-- Course Form -->
+  <div class="card mb-3">
+    <h3 class="card-title mb-3">📚 Course Details</h3>
+    <form id="course-form">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label">Course Name *</label>
+          <input type="text" id="courseName" class="form-control" placeholder="e.g. Complete Python Bootcamp" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Course Thumbnail URL</label>
+          <input type="url" id="photo" class="form-control" placeholder="https://..."/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">PDF Book URL</label>
+          <input type="url" id="pdfBook" class="form-control" placeholder="https://..."/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Price (৳) — leave blank if free</label>
+          <input type="number" id="courseAmount" class="form-control" placeholder="0.00" min="0" step="0.01"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Course Type</label>
+          <select id="isFree" class="form-control">
+            <option value="false">Paid</option>
+            <option value="true">Free</option>
+          </select>
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label">Description</label>
+          <textarea id="description" class="form-control" rows="4" placeholder="Describe what students will learn..."></textarea>
+        </div>
+      </div>
+      <div style="display:flex;gap:1rem;justify-content:flex-end;">
+        <a href="/pages/teacher/dashboard.html" class="btn btn-secondary">Cancel</a>
+        <button type="submit" id="save-course-btn" class="btn btn-primary">💾 Save Course</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Lessons Section (only shown after course saved) -->
+  <div id="lessons-section" class="hidden">
+    <div class="card mb-3">
+      <div class="dash-header" style="margin-bottom:1.5rem;">
+        <h3 class="card-title">🎬 Lessons</h3>
+        <button onclick="openModal('lesson-modal')" class="btn btn-primary btn-sm">+ Add Lesson</button>
+      </div>
+      <div id="lessons-list"></div>
+    </div>
+
+    <!-- Quiz Section -->
+    <div class="card">
+      <div class="dash-header" style="margin-bottom:1.5rem;">
+        <h3 class="card-title">❓ Quiz Questions</h3>
+        <button onclick="openModal('quiz-modal')" class="btn btn-primary btn-sm">+ Add Question</button>
+      </div>
+      <div id="quiz-list"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Lesson Modal -->
+<div class="modal-overlay" id="lesson-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title" id="lesson-modal-title">Add Lesson</h3>
+      <button class="modal-close" onclick="closeModal('lesson-modal');resetLessonForm()">×</button>
+    </div>
+    <input type="hidden" id="lesson-id"/>
+    <div class="form-group">
+      <label class="form-label">Lesson Title *</label>
+      <input type="text" id="lessonTitle" class="form-control" placeholder="e.g. Introduction to Variables" required/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Video Type</label>
+      <select id="videoType" class="form-control">
+        <option value="YOUTUBE">YouTube URL</option>
+        <option value="UPLOAD">Direct Video URL</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Video URL</label>
+      <input type="url" id="videoUrl" class="form-control" placeholder="https://youtube.com/watch?v=..."/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea id="lessonDesc" class="form-control" rows="3" placeholder="What will students learn in this lesson?"></textarea>
+    </div>
+    <div style="display:flex;gap:1rem;">
+      <button onclick="closeModal('lesson-modal');resetLessonForm()" class="btn btn-secondary" style="flex:1;">Cancel</button>
+      <button onclick="saveLesson()" class="btn btn-primary" style="flex:1;">Save Lesson</button>
+    </div>
+  </div>
+</div>
+
+<!-- Quiz Modal -->
+<div class="modal-overlay" id="quiz-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title" id="quiz-modal-title">Add Quiz Question</h3>
+      <button class="modal-close" onclick="closeModal('quiz-modal');resetQuizForm()">×</button>
+    </div>
+    <input type="hidden" id="quiz-id"/>
+    <div class="form-group">
+      <label class="form-label">Question *</label>
+      <textarea id="quizQuestion" class="form-control" rows="2" placeholder="Type your question here..." required></textarea>
+    </div>
+    <div class="form-group"><label class="form-label">Option A *</label><input type="text" id="optionA" class="form-control" placeholder="Answer option A" required/></div>
+    <div class="form-group"><label class="form-label">Option B *</label><input type="text" id="optionB" class="form-control" placeholder="Answer option B" required/></div>
+    <div class="form-group"><label class="form-label">Option C (optional)</label><input type="text" id="optionC" class="form-control" placeholder="Answer option C"/></div>
+    <div class="form-group">
+      <label class="form-label">Correct Answer *</label>
+      <select id="correctAnswer" class="form-control">
+        <option value="">Select correct answer</option>
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:1rem;">
+      <button onclick="closeModal('quiz-modal');resetQuizForm()" class="btn btn-secondary" style="flex:1;">Cancel</button>
+      <button onclick="saveQuiz()" class="btn btn-primary" style="flex:1;">Save Question</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+  requireAuth('TEACHER');
+  const params = new URLSearchParams(window.location.search);
+  let courseId = params.get('courseId');
+  let editingLessonId = null;
+  let editingQuizId = null;
+
+  if (courseId) {
+    document.getElementById('page-title').textContent = 'Edit Course';
+    loadCourse();
+  }
+
+  async function loadCourse() {
+    try {
+      const c = await api.get(`/teacher/courses`);
+      const course = c.find(x => x.coursesId == courseId);
+      if (!course) { showToast('Course not found', 'error'); return; }
+      document.getElementById('courseName').value = course.courseName || '';
+      document.getElementById('photo').value = course.photo || '';
+      document.getElementById('pdfBook').value = course.pdfBook || '';
+      document.getElementById('courseAmount').value = course.courseAmount || '';
+      document.getElementById('description').value = course.description || '';
+      document.getElementById('isFree').value = course.free ? 'true' : 'false';
+      showLessonsSection();
+      loadLessons();
+      loadQuiz();
+    } catch(e) { showToast('Failed to load course', 'error'); }
+  }
+
+  document.getElementById('course-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('save-course-btn');
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+    const payload = {
+      courseName: document.getElementById('courseName').value,
+      photo: document.getElementById('photo').value,
+      pdfBook: document.getElementById('pdfBook').value,
+      courseAmount: parseFloat(document.getElementById('courseAmount').value) || 0,
+      description: document.getElementById('description').value,
+      isFree: document.getElementById('isFree').value === 'true',
+      free: document.getElementById('isFree').value === 'true'
+    };
+    try {
+      let result;
+      if (courseId) {
+        result = await api.put(`/teacher/courses/${courseId}`, payload);
+        showToast('Course updated!', 'success');
+      } else {
+        result = await api.post('/teacher/courses', payload);
+        courseId = result.coursesId;
+        history.replaceState(null, '', `?courseId=${courseId}`);
+        showToast('Course created! Add lessons and quiz now.', 'success');
+        showLessonsSection();
+      }
+    } catch(e) { showToast(e.message, 'error'); }
+    btn.disabled = false;
+    btn.textContent = '💾 Save Course';
+  });
+
+  function showLessonsSection() {
+    document.getElementById('lessons-section').classList.remove('hidden');
+  }
+
+  async function loadLessons() {
+    if (!courseId) return;
+    try {
+      const lessons = await api.get(`/teacher/courses/${courseId}/lessons`);
+      const list = document.getElementById('lessons-list');
+      list.innerHTML = lessons.length ? lessons.map(l => `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:1rem;border:1px solid var(--border);border-radius:10px;margin-bottom:0.75rem;">
+          <div>
+            <div style="font-weight:600;">${l.lessonTitle}</div>
+            <div class="text-sm text-muted">${l.videoType} · ${l.videoUrl ? l.videoUrl.substring(0,40)+'...' : 'No URL'}</div>
+          </div>
+          <div style="display:flex;gap:0.5rem;">
+            <button onclick="editLesson(${l.lessonsId},'${encodeURIComponent(l.lessonTitle)}','${l.videoType}','${encodeURIComponent(l.videoUrl||'')}','${encodeURIComponent(l.description||'')}')" class="btn btn-secondary btn-sm">✏️</button>
+            <button onclick="deleteLesson(${l.lessonsId})" class="btn btn-danger btn-sm">🗑️</button>
+          </div>
+        </div>`).join('') : '<p class="text-muted" style="text-align:center;padding:1rem;">No lessons yet. Add your first lesson!</p>';
+    } catch(e) { console.error(e); }
+  }
+
+  async function loadQuiz() {
+    if (!courseId) return;
+    try {
+      const quiz = await api.get(`/teacher/courses/${courseId}/quiz`);
+      const list = document.getElementById('quiz-list');
+      list.innerHTML = quiz.length ? quiz.map((q,i) => `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:1rem;border:1px solid var(--border);border-radius:10px;margin-bottom:0.75rem;">
+          <div>
+            <div style="font-weight:600;">Q${i+1}: ${q.question.substring(0,80)}${q.question.length>80?'...':''}</div>
+            <div class="text-sm text-muted">Correct: <strong style="color:var(--emerald);">${q.correctAnswer}</strong> · A:${q.optionA} B:${q.optionB}${q.optionC?' C:'+q.optionC:''}</div>
+          </div>
+          <div style="display:flex;gap:0.5rem;">
+            <button onclick="editQuiz(${q.quizId})" class="btn btn-secondary btn-sm">✏️</button>
+            <button onclick="deleteQuiz(${q.quizId})" class="btn btn-danger btn-sm">🗑️</button>
+          </div>
+        </div>`).join('') : '<p class="text-muted" style="text-align:center;padding:1rem;">No questions yet. Add quiz questions!</p>';
+    } catch(e) { console.error(e); }
+  }
+
+  async function saveLesson() {
+    const payload = {
+      lessonTitle: document.getElementById('lessonTitle').value,
+      videoType: document.getElementById('videoType').value,
+      videoUrl: document.getElementById('videoUrl').value,
+      description: document.getElementById('lessonDesc').value
+    };
+    try {
+      if (editingLessonId) await api.put(`/teacher/lessons/${editingLessonId}`, payload);
+      else await api.post(`/teacher/courses/${courseId}/lessons`, payload);
+      showToast('Lesson saved!', 'success');
+      closeModal('lesson-modal');
+      resetLessonForm();
+      loadLessons();
+    } catch(e) { showToast(e.message, 'error'); }
+  }
+
+  function editLesson(id, title, type, url, desc) {
+    editingLessonId = id;
+    document.getElementById('lessonTitle').value = decodeURIComponent(title);
+    document.getElementById('videoType').value = type;
+    document.getElementById('videoUrl').value = decodeURIComponent(url);
+    document.getElementById('lessonDesc').value = decodeURIComponent(desc);
+    document.getElementById('lesson-modal-title').textContent = 'Edit Lesson';
+    openModal('lesson-modal');
+  }
+
+  function resetLessonForm() {
+    editingLessonId = null;
+    document.getElementById('lessonTitle').value = '';
+    document.getElementById('videoUrl').value = '';
+    document.getElementById('lessonDesc').value = '';
+    document.getElementById('lesson-modal-title').textContent = 'Add Lesson';
+  }
+
+  async function deleteLesson(id) {
+    if (!confirm('Delete this lesson?')) return;
+    try { await api.delete(`/teacher/lessons/${id}`); showToast('Lesson deleted','success'); loadLessons(); }
+    catch(e) { showToast(e.message,'error'); }
+  }
+
+  async function saveQuiz() {
+    const payload = {
+      question: document.getElementById('quizQuestion').value,
+      optionA: document.getElementById('optionA').value,
+      optionB: document.getElementById('optionB').value,
+      optionC: document.getElementById('optionC').value,
+      correctAnswer: document.getElementById('correctAnswer').value
+    };
+    try {
+      if (editingQuizId) await api.put(`/teacher/quiz/${editingQuizId}`, payload);
+      else await api.post(`/teacher/courses/${courseId}/quiz`, payload);
+      showToast('Question saved!', 'success');
+      closeModal('quiz-modal');
+      resetQuizForm();
+      loadQuiz();
+    } catch(e) { showToast(e.message, 'error'); }
+  }
+
+  function editQuiz(id) {
+    editingQuizId = id;
+    document.getElementById('quiz-modal-title').textContent = 'Edit Question';
+    openModal('quiz-modal');
+  }
+
+  function resetQuizForm() {
+    editingQuizId = null;
+    ['quizQuestion','optionA','optionB','optionC'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('correctAnswer').value = '';
+    document.getElementById('quiz-modal-title').textContent = 'Add Quiz Question';
+  }
+
+  async function deleteQuiz(id) {
+    if (!confirm('Delete this question?')) return;
+    try { await api.delete(`/teacher/quiz/${id}`); showToast('Question deleted','success'); loadQuiz(); }
+    catch(e) { showToast(e.message,'error'); }
+  }
+</script>
+</body>
+</html>

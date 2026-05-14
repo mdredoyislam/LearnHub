@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Teacher Dashboard — Learn Hub</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+<nav class="navbar"><div class="container">
+  <div class="logo">Learn<span>Hub</span></div>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <span class="badge badge-amber">TEACHER</span>
+    <a href="/pages/profile.html" id="teacher-name" style="color:var(--text-muted);font-size:0.85rem;text-decoration:none;font-weight:600;"></a>
+    <button onclick="logout()" class="btn btn-secondary btn-sm">Logout</button>
+  </div>
+</div></nav>
+
+<div class="dash-container container">
+  <aside class="sidebar">
+    <div class="sidebar-menu">
+      <a href="#" class="active" onclick="switchTab('overview')">🏠 Overview</a>
+      <a href="#" onclick="switchTab('courses')">📚 My Courses</a>
+      <a href="#" onclick="switchTab('enrollments')">⏳ Enrollments</a>
+      <a href="#" onclick="switchTab('earnings')">💰 Earnings & Withdraw</a>
+    </div>
+  </aside>
+
+  <main class="dash-main">
+    
+    <!-- Overview Tab -->
+    <div id="tab-overview" class="tab-content active">
+      <div class="dash-header">
+        <h1 class="dash-title">Teacher Overview</h1>
+        <a href="/pages/teacher/course-editor.html" class="btn btn-primary btn-sm">+ Create New Course</a>
+      </div>
+      <div class="dash-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(99,102,241,0.15);">📚</div>
+          <div class="stat-value text-gradient" id="s-courses">—</div>
+          <div class="stat-label">Total Courses</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(16,185,129,0.15);">👥</div>
+          <div class="stat-value" style="color:var(--emerald)" id="s-students">—</div>
+          <div class="stat-label">Total Students</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(245,158,11,0.15);">💰</div>
+          <div class="stat-value" style="color:var(--amber)" id="s-earnings">৳0</div>
+          <div class="stat-label">Net Earnings (After 10%)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Courses Tab -->
+    <div id="tab-courses" class="tab-content">
+      <div class="dash-header"><h1 class="dash-title">Manage Courses</h1></div>
+      <div class="grid" id="teacher-courses-grid"></div>
+    </div>
+
+    <!-- Enrollments Tab -->
+    <div id="tab-enrollments" class="tab-content">
+      <div class="dash-header"><h1 class="dash-title">Pending Enrollments</h1></div>
+      <div class="card"><div class="table-container"><table>
+        <thead><tr><th>Student</th><th>Course</th><th>Amount</th><th>Method</th><th>Trx ID</th><th>Action</th></tr></thead>
+        <tbody id="enrollments-list"></tbody>
+      </table></div></div>
+    </div>
+
+    <!-- Earnings Tab -->
+    <div id="tab-earnings" class="tab-content">
+      <div class="dash-header"><h1 class="dash-title">Earnings & Withdrawal</h1></div>
+      <div style="display:grid;grid-template-columns:1fr 350px;gap:1.5rem;">
+        <div class="card">
+          <h3 class="card-title mb-3">Withdrawal History</h3>
+          <div class="table-container">
+            <table>
+              <thead><tr><th>Date</th><th>Amount</th><th>Method</th><th>Status</th></tr></thead>
+              <tbody id="withdraw-list"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <h3 class="card-title mb-3">Request Withdrawal</h3>
+          <form id="withdraw-form">
+            <div class="form-group">
+              <label class="form-label">Available Balance</label>
+              <div class="stat-value" id="avail-balance" style="font-size:1.5rem;">৳0</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Amount to Withdraw</label>
+              <input type="number" id="w-amount" class="form-control" placeholder="0.00" required/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Payment Details (e.g. bKash/Bank)</label>
+              <textarea id="w-details" class="form-control" rows="3" placeholder="017... (bKash Personal) or Bank Details" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Submit Request</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+  requireAuth('TEACHER');
+  document.getElementById('teacher-name').textContent = localStorage.getItem('lh_name');
+
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+    document.getElementById('tab-' + tabId).classList.add('active');
+    event.currentTarget.classList.add('active');
+    if (tabId === 'overview') loadOverview();
+    if (tabId === 'courses') loadCourses();
+    if (tabId === 'enrollments') loadEnrollments();
+    if (tabId === 'earnings') loadEarnings();
+  }
+
+  async function loadOverview() {
+    try {
+      const stats = await api.get('/teacher/earnings');
+      document.getElementById('s-earnings').textContent = '৳' + stats.toFixed(2);
+      document.getElementById('avail-balance').textContent = '৳' + stats.toFixed(2);
+      
+      const courses = await api.get('/teacher/courses');
+      document.getElementById('s-courses').textContent = courses.length;
+      
+      let totalStudents = 0;
+      courses.forEach(c => totalStudents += c.enrolledCount || 0);
+      document.getElementById('s-students').textContent = totalStudents;
+    } catch(e) { console.error(e); }
+  }
+
+  async function loadCourses() {
+    try {
+      const courses = await api.get('/teacher/courses');
+      document.getElementById('teacher-courses-grid').innerHTML = courses.map(c => `
+        <div class="course-card">
+          <div class="course-card-img">
+            ${c.photo ? `<img src="${c.photo}" alt="${c.courseName}" style="width:100%;height:100%;object-fit:cover;">` : '<div class="placeholder-icon">📚</div>'}
+          </div>
+          <div class="course-card-body">
+            <h3 class="course-card-title">${c.courseName}</h3>
+            <div class="course-card-meta">
+              <span>${c.enrolledCount} Students</span>
+              <span class="course-price">${c.free ? 'FREE' : '৳'+c.courseAmount}</span>
+            </div>
+            <a href="/pages/teacher/course-editor.html?courseId=${c.coursesId}" class="btn btn-secondary btn-full mt-2">Edit Course</a>
+          </div>
+        </div>`).join('');
+    } catch(e) { console.error(e); }
+  }
+
+  async function loadEnrollments() {
+    try {
+      const reqs = await api.get('/teacher/enrollments/pending');
+      document.getElementById('enrollments-list').innerHTML = reqs.length ? reqs.map(r => `
+        <tr><td>${r.student.fullName}</td><td>${r.course.courseName}</td><td>৳${r.amount}</td><td>${r.paymentMethod}</td><td><code>${r.transactionId}</code></td>
+        <td><button onclick="approveEnroll(${r.incomeRecordId})" class="btn btn-primary btn-sm">Approve</button>
+        <button onclick="rejectEnroll(${r.incomeRecordId})" class="btn btn-danger btn-sm">Reject</button></td></tr>`).join('') : '<tr><td colspan="6" style="text-align:center;">No requests</td></tr>';
+    } catch(e) { console.error(e); }
+  }
+
+  async function approveEnroll(id) {
+    if (!confirm('Approve?')) return;
+    try { await api.post(`/teacher/enrollments/${id}/approve`); showToast('Approved','success'); loadEnrollments(); loadOverview(); } catch(e) { showToast(e.message,'error'); }
+  }
+
+  async function rejectEnroll(id) {
+    if (!confirm('Reject?')) return;
+    try { await api.post(`/teacher/enrollments/${id}/reject`); showToast('Rejected','info'); loadEnrollments(); } catch(e) { showToast(e.message,'error'); }
+  }
+
+  async function loadEarnings() {
+    loadOverview(); // Updates balance
+    try {
+        const reqs = await api.get('/teacher/withdrawals');
+        document.getElementById('withdraw-list').innerHTML = reqs.length ? reqs.map(w => `
+          <tr>
+            <td>${new Date(w.requestedAt).toLocaleDateString()}</td>
+            <td>৳${w.amount}</td>
+            <td>${w.paymentDetails}</td>
+            <td><span class="badge ${w.status === 'APPROVED' ? 'badge-success' : w.status === 'REJECTED' ? 'badge-danger' : 'badge-amber'}">${w.status}</span></td>
+          </tr>
+        `).join('') : '<tr><td colspan="4" style="text-align:center;">No history available</td></tr>';
+    } catch(e) { console.error(e); }
+  }
+
+  document.getElementById('withdraw-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const amount = document.getElementById('w-amount').value;
+    const details = document.getElementById('w-details').value;
+    try {
+      await api.post('/teacher/withdraw', { amount: parseFloat(amount), details: details });
+      showToast('Withdrawal request submitted', 'success');
+      e.target.reset();
+      loadEarnings();
+    } catch(err) {
+      showToast(err.message, 'error');
+    }
+  });
+
+  loadOverview();
+</script>
+</body>
+</html>

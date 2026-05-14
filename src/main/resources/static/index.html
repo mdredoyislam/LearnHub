@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Learn Hub — Online Learning Management System</title>
+  <meta name="description" content="Learn Hub is a modern LMS platform for programming and spoken language courses. Access expert-led lessons, quizzes, and earn certificates."/>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="container">
+    <div class="logo">Learn<span>Hub</span></div>
+    <ul class="nav-links">
+      <li><a href="#courses">Courses</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#stats">Stats</a></li>
+    </ul>
+    <div class="nav-actions" id="nav-actions">
+      <a href="/login.html" class="btn btn-secondary btn-sm">Sign In</a>
+      <a href="/register.html" class="btn btn-primary btn-sm">Get Started</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" style="padding-top:70px;">
+  <div class="hero-bg-orb orb1"></div>
+  <div class="hero-bg-orb orb2"></div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-badge">🎓 Advanced Java Lab Project — Southeast University</div>
+      <h1 class="hero-title">
+        Learn Anything.<br>
+        <span class="gradient-text">Achieve Everything.</span>
+      </h1>
+      <p class="hero-desc">
+        Learn Hub is a modern, role-based LMS for programming & spoken languages.
+        Access structured lessons, take quizzes, and earn certificates — all in one platform.
+      </p>
+      <div class="hero-actions">
+        <a href="/register.html" class="btn btn-primary btn-lg">Start Learning Free</a>
+        <a href="#courses" class="btn btn-secondary btn-lg">Browse Courses</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-value text-gradient" id="stat-courses">—</div>
+          <div class="hero-stat-label">Courses Available</div>
+        </div>
+        <div>
+          <div class="hero-stat-value text-gradient" id="stat-students">—</div>
+          <div class="hero-stat-label">Active Students</div>
+        </div>
+        <div>
+          <div class="hero-stat-value text-gradient" id="stat-teachers">—</div>
+          <div class="hero-stat-label">Expert Teachers</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <div class="container">
+    <div class="section-title">
+      <h2>Why Choose <span class="text-gradient">Learn Hub?</span></h2>
+      <p>A complete learning ecosystem built with Java Spring Boot and modern web technologies</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem;">
+      <div class="card">
+        <div style="font-size:2.5rem;margin-bottom:1rem;">🔐</div>
+        <h3 class="card-title">Role-Based Access</h3>
+        <p class="text-sm">Admin, Teacher & Student roles with secure JWT authentication and Spring Security.</p>
+      </div>
+      <div class="card">
+        <div style="font-size:2.5rem;margin-bottom:1rem;">🎬</div>
+        <h3 class="card-title">Multi-Format Lessons</h3>
+        <p class="text-sm">YouTube embeds, direct video uploads, PDFs, and rich text descriptions per lesson.</p>
+      </div>
+      <div class="card">
+        <div style="font-size:2.5rem;margin-bottom:1rem;">💳</div>
+        <h3 class="card-title">Payment-Gated Content</h3>
+        <p class="text-sm">Free and paid courses with enrollment system. Unlock premium content after payment.</p>
+      </div>
+      <div class="card">
+        <div style="font-size:2.5rem;margin-bottom:1rem;">📝</div>
+        <h3 class="card-title">Exam & Certification</h3>
+        <p class="text-sm">Auto-graded exams with certificate generation for students scoring 50%+.</p>
+      </div>
+      <div class="card">
+        <div style="font-size:2.5rem;margin-bottom:1rem;">📊</div>
+        <h3 class="card-title">Admin Analytics</h3>
+        <p class="text-sm">Revenue dashboards, enrollment counts, and user management for admins.</p>
+      </div>
+      <div class="card">
+        <div style="font-size:2.5rem;margin-bottom:1rem;">☕</div>
+        <h3 class="card-title">Spring Boot Backend</h3>
+        <p class="text-sm">Pure Java Spring Boot RESTful API with JPA/Hibernate and MySQL database.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COURSES -->
+<section class="section" id="courses" style="padding-top:0;">
+  <div class="container">
+    <div class="section-title">
+      <h2>Featured <span class="text-gradient">Courses</span></h2>
+      <p>Explore our growing library of programming and language courses</p>
+    </div>
+    <div class="course-grid" id="courses-grid">
+      <!-- Loaded dynamically -->
+      <div class="card" style="text-align:center;grid-column:1/-1;padding:3rem;">
+        <div style="font-size:2rem;margin-bottom:0.75rem;">⏳</div>
+        <p>Loading courses...</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS SECTION -->
+<section class="section" id="stats" style="background:rgba(99,102,241,0.05);border-top:1px solid rgba(99,102,241,0.1);border-bottom:1px solid rgba(99,102,241,0.1);">
+  <div class="container">
+    <div class="section-title">
+      <h2>Built with <span class="text-gradient">Advanced Java</span></h2>
+      <p>Demonstrating enterprise-level Spring Boot development for Southeast University CSE</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1.5rem;text-align:center;">
+      <div class="card"><div style="font-size:2rem;font-weight:800;font-family:'Poppins',sans-serif;" class="text-gradient">7</div><p class="text-sm">Database Tables</p></div>
+      <div class="card"><div style="font-size:2rem;font-weight:800;font-family:'Poppins',sans-serif;" class="text-gradient">25+</div><p class="text-sm">REST Endpoints</p></div>
+      <div class="card"><div style="font-size:2rem;font-weight:800;font-family:'Poppins',sans-serif;" class="text-gradient">JWT</div><p class="text-sm">Spring Security</p></div>
+      <div class="card"><div style="font-size:2rem;font-weight:800;font-family:'Poppins',sans-serif;" class="text-gradient">3</div><p class="text-sm">User Roles</p></div>
+      <div class="card"><div style="font-size:2rem;font-weight:800;font-family:'Poppins',sans-serif;" class="text-gradient">JPA</div><p class="text-sm">Hibernate ORM</p></div>
+      <div class="card"><div style="font-size:2rem;font-weight:800;font-family:'Poppins',sans-serif;" class="text-gradient">50%</div><p class="text-sm">Pass for Certificate</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer style="background:var(--bg-secondary);border-top:1px solid var(--border);padding:2.5rem 0;text-align:center;">
+  <div class="container">
+    <div class="logo" style="margin-bottom:0.75rem;display:inline-block;">Learn<span>Hub</span></div>
+    <p class="text-sm text-muted">Advanced Java Lab Project — Southeast University, Dept. of CSE | 2026</p>
+    <p class="text-sm text-muted" style="margin-top:0.5rem;">Backend: Java Spring Boot · Spring Security · JPA/Hibernate · MySQL</p>
+  </div>
+</footer>
+
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+  // Check if logged in, update nav
+  if (isLoggedIn()) {
+    const user = getAuthUser();
+    document.getElementById('nav-actions').innerHTML = `
+      <span style="color:var(--text-muted);font-size:0.85rem;">Hi, ${user.name}</span>
+      <button onclick="redirectToDashboard()" class="btn btn-primary btn-sm">Dashboard</button>
+    `;
+  }
+
+  // Load stats
+  async function loadStats() {
+    try {
+      const courses = await api.get('/public/courses');
+      document.getElementById('stat-courses').textContent = courses.length || '0';
+    } catch(e) { document.getElementById('stat-courses').textContent = '0'; }
+    try {
+      const res = await fetch('/api/admin/analytics', {headers:{'Authorization':'Bearer '+localStorage.getItem('lh_token')}});
+      if(res.ok) {
+        const data = await res.json();
+        document.getElementById('stat-students').textContent = data.totalStudents || '0';
+        document.getElementById('stat-teachers').textContent = data.totalTeachers || '0';
+      } else { throw new Error(); }
+    } catch { document.getElementById('stat-students').textContent = '100+'; document.getElementById('stat-teachers').textContent = '10+'; }
+  }
+
+  // Load courses
+  async function loadCourses() {
+    try {
+      const courses = await api.get('/public/courses');
+      const grid = document.getElementById('courses-grid');
+      if (!courses || courses.length === 0) {
+        grid.innerHTML = `<div class="card" style="text-align:center;grid-column:1/-1;padding:3rem;">
+          <div style="font-size:2.5rem;margin-bottom:0.75rem;">📚</div>
+          <h3>No courses yet</h3><p>Be the first to create a course!</p>
+          <a href="/register.html" class="btn btn-primary mt-2">Get Started</a></div>`;
+        return;
+      }
+      grid.innerHTML = courses.map(c => `
+        <div class="course-card" onclick="window.location.href='/login.html'">
+          <div class="course-card-img">
+            ${c.photo ? `<img src="${c.photo}" alt="${c.courseName}" style="width:100%;height:100%;object-fit:cover;">` : `<div class="placeholder-icon">📖</div>`}
+          </div>
+          <div class="course-card-body">
+            <div class="course-card-title">${c.courseName}</div>
+            <div class="course-card-teacher">👨‍🏫 ${c.teacherName || 'Unknown'}</div>
+            <div class="course-card-meta">
+              ${formatPrice(c.courseAmount, c.free || c.isFree)}
+              <div class="course-stats">
+                <span>📹 ${c.lessonCount} lessons</span>
+                <span>👥 ${c.enrollmentCount}</span>
+              </div>
+            </div>
+          </div>
+        </div>`).join('');
+    } catch(e) {
+      document.getElementById('courses-grid').innerHTML = `<div class="card" style="text-align:center;grid-column:1/-1;padding:2rem;"><p>Could not load courses. Make sure the server is running.</p></div>`;
+    }
+  }
+
+  loadStats();
+  loadCourses();
+</script>
+</body>
+</html>

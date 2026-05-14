@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Certificate — Learn Hub</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <style>
+    @media print {
+      .navbar, .no-print { display: none !important; }
+      body { background: white !important; }
+      .certificate { border-color: #6366f1 !important; }
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar no-print"><div class="container">
+  <div class="logo">Learn<span>Hub</span></div>
+  <div style="display:flex;gap:1rem;">
+    <a href="/pages/student/dashboard.html" class="btn btn-secondary btn-sm">← Dashboard</a>
+    <button onclick="window.print()" class="btn btn-primary btn-sm">🖨️ Print Certificate</button>
+  </div>
+</div></nav>
+
+<div style="padding-top:100px;padding-bottom:3rem;padding-left:1.5rem;padding-right:1.5rem;" id="cert-outer">
+  <div class="certificate-wrap">
+    <div style="text-align:center;margin-bottom:1.5rem;" class="no-print">
+      <span class="badge badge-success" style="font-size:0.9rem;padding:0.5rem 1.25rem;">🏆 Certificate of Completion</span>
+    </div>
+    <div class="certificate" id="certificate">
+      <div class="certificate-logo">Learn<span style="background:linear-gradient(135deg,#6366f1,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Hub</span></div>
+      <div class="certificate-issued">Online Learning Management System</div>
+
+      <div style="display:flex;justify-content:center;margin-bottom:2rem;">
+        <div style="width:60px;height:3px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:2px;"></div>
+      </div>
+
+      <div class="certificate-title">THIS IS TO CERTIFY THAT</div>
+      <div class="certificate-name" id="cert-name">Loading...</div>
+      <div class="certificate-text">has successfully completed the course</div>
+      <div class="certificate-course" id="cert-course">—</div>
+
+      <div class="certificate-score" id="cert-score">
+        ✅ Score: —%
+      </div>
+
+      <p style="color:var(--text-muted);font-size:0.85rem;max-width:500px;margin:0 auto 2rem;">
+        This certificate is awarded in recognition of successful completion of the course examination
+        with a passing score of 50% or above, on the Learn Hub Online Learning Platform.
+      </p>
+
+      <div class="certificate-footer">
+        <div class="cert-sign">
+          <div class="cert-sign-line"></div>
+          <div style="font-weight:600;font-size:0.9rem;" id="cert-teacher">Course Teacher</div>
+          <div class="cert-sign-label">Course Instructor</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:2rem;margin-bottom:0.25rem;">🏆</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);" id="cert-date">—</div>
+        </div>
+        <div class="cert-sign">
+          <div class="cert-sign-line"></div>
+          <div style="font-weight:600;font-size:0.9rem;">Learn Hub LMS</div>
+          <div class="cert-sign-label">Platform Director</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:1.5rem;" class="no-print">
+      <p class="text-sm text-muted">Certificate ID: <code id="cert-id" style="color:var(--indigo-light);">—</code></p>
+      <button onclick="window.print()" class="btn btn-primary mt-2">🖨️ Download / Print</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+  requireAuth('STUDENT');
+  const params = new URLSearchParams(window.location.search);
+  const courseId = params.get('courseId');
+  if (!courseId) window.location.href = '/pages/student/dashboard.html';
+
+  async function loadCertificate() {
+    try {
+      const [result, course] = await Promise.all([
+        api.get(`/student/exam/${courseId}/result`),
+        api.get(`/student/courses/${courseId}`)
+      ]);
+
+      if (!result.certificateEligible) {
+        document.getElementById('cert-outer').innerHTML = `
+          <div style="text-align:center;padding:5rem 1rem;">
+            <div style="font-size:4rem;margin-bottom:1rem;">😔</div>
+            <h2 style="margin-bottom:0.75rem;">Certificate Not Available</h2>
+            <p class="text-muted mb-3">You need to score 50% or above to earn a certificate.<br>Your score: <strong style="color:var(--rose);">${result.examMark}%</strong></p>
+            <a href="/pages/student/dashboard.html" class="btn btn-primary">Back to Dashboard</a>
+          </div>`;
+        return;
+      }
+
+      document.title = `Certificate — ${course.courseName} — Learn Hub`;
+      document.getElementById('cert-name').textContent = result.studentName;
+      document.getElementById('cert-course').textContent = course.courseName;
+      document.getElementById('cert-score').innerHTML = `✅ Score: ${result.examMark}% · Passed`;
+      document.getElementById('cert-teacher').textContent = course.teacherName || 'Course Instructor';
+      document.getElementById('cert-date').textContent = `Completed: ${formatDate(result.submittedAt)}`;
+      document.getElementById('cert-id').textContent = `LH-${result.examId}-${courseId}-${Date.now().toString(36).toUpperCase()}`;
+
+    } catch(e) {
+      document.getElementById('cert-outer').innerHTML = `
+        <div style="text-align:center;padding:5rem 1rem;">
+          <div style="font-size:4rem;margin-bottom:1rem;">⚠️</div>
+          <h2 style="margin-bottom:0.75rem;">Exam Not Found</h2>
+          <p class="text-muted mb-3">You haven't taken the exam for this course yet.</p>
+          <a href="/pages/student/course-detail.html?courseId=${courseId}" class="btn btn-primary">Go to Course</a>
+        </div>`;
+    }
+  }
+
+  loadCertificate();
+</script>
+</body>
+</html>

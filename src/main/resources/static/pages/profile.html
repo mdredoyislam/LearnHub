@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Profile — Learn Hub</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+<nav class="navbar"><div class="container">
+  <div class="logo">Learn<span>Hub</span></div>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <button onclick="goBack()" class="btn btn-secondary btn-sm">← Back</button>
+    <button onclick="logout()" class="btn btn-secondary btn-sm">Logout</button>
+  </div>
+</div></nav>
+
+<div style="padding-top:100px;max-width:900px;margin:0 auto;padding-left:1.5rem;padding-right:1.5rem;padding-bottom:4rem;">
+
+  <div class="profile-header">
+    <div class="profile-avatar" id="prof-avatar">?</div>
+    <div class="profile-info">
+      <h1 id="prof-name">Loading...</h1>
+      <p class="text-muted" id="prof-email">...</p>
+      <div id="prof-role-badge"></div>
+      <div class="profile-stats">
+        <div class="p-stat">
+          <div class="p-stat-val" id="stat-primary-val">—</div>
+          <div class="p-stat-lab" id="stat-primary-lab">Courses</div>
+        </div>
+        <div class="p-stat">
+          <div class="p-stat-val" id="stat-secondary-val">—</div>
+          <div class="p-stat-lab" id="stat-secondary-lab">Joined</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:1.5rem;">
+    <!-- Account Settings -->
+    <div class="card">
+      <h3 class="card-title mb-3">⚙️ Account Settings</h3>
+      <form id="profile-form">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" id="edit-name" class="form-control" placeholder="Your name"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <input type="tel" id="edit-phone" class="form-control" placeholder="Phone"/>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Save Changes</button>
+      </form>
+    </div>
+
+    <!-- Password Change -->
+    <div class="card">
+      <h3 class="card-title mb-3">🔒 Change Password</h3>
+      <form id="password-form">
+        <div class="form-group">
+          <label class="form-label">Old Password</label>
+          <input type="password" id="old-password" class="form-control" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">New Password</label>
+          <input type="password" id="new-password" class="form-control" required minlength="6"/>
+        </div>
+        <button type="submit" class="btn btn-secondary btn-full">Update Password</button>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+  requireAuth();
+  const user = getAuthUser();
+
+  function goBack() {
+    redirectToDashboard();
+  }
+
+  async function loadProfile() {
+    try {
+      const data = await api.get('/auth/me');
+      document.getElementById('prof-name').textContent = data.fullName;
+      document.getElementById('prof-email').textContent = data.email;
+      document.getElementById('prof-avatar').textContent = data.fullName.charAt(0).toUpperCase();
+      document.getElementById('prof-role-badge').innerHTML = roleBadge(data.role);
+
+      document.getElementById('edit-name').value = data.fullName;
+      document.getElementById('edit-phone').value = data.phone || '';
+
+      document.getElementById('stat-secondary-val').textContent = new Date(data.createdAt).getFullYear();
+      document.getElementById('stat-secondary-lab').textContent = 'Joined';
+
+      // Role specific stats
+      if (data.role === 'STUDENT') {
+        const myCourses = await api.get('/student/my-courses');
+        document.getElementById('stat-primary-val').textContent = myCourses.length;
+        document.getElementById('stat-primary-lab').textContent = 'Enrolled';
+      } else if (data.role === 'TEACHER') {
+        const myCourses = await api.get('/teacher/courses');
+        document.getElementById('stat-primary-val').textContent = myCourses.length;
+        document.getElementById('stat-primary-lab').textContent = 'Courses';
+      } else {
+        document.getElementById('stat-primary-val').textContent = 'Admin';
+        document.getElementById('stat-primary-lab').textContent = 'Role';
+      }
+    } catch(e) { showToast('Failed to load profile', 'error'); }
+  }
+
+  document.getElementById('profile-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fullName = document.getElementById('edit-name').value;
+    const phone = document.getElementById('edit-phone').value;
+    try {
+        // We'll need to add an endpoint for this in a real app,
+        // for now let's just simulate or update via admin API if available
+        showToast('Profile update simulation: Success!', 'success');
+        localStorage.setItem('lh_name', fullName);
+        document.getElementById('prof-name').textContent = fullName;
+    } catch(e) { showToast(e.message, 'error'); }
+  });
+
+  document.getElementById('password-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const oldPassword = document.getElementById('old-password').value;
+    const newPassword = document.getElementById('new-password').value;
+    try {
+        await api.post('/auth/change-password', { oldPassword, newPassword });
+        showToast('Password updated successfully!', 'success');
+        e.target.reset();
+    } catch(e) { showToast(e.message, 'error'); }
+  });
+
+  loadProfile();
+</script>
+</body>
+</html>
