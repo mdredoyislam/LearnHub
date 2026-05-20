@@ -1,76 +1,82 @@
-# Learn Hub LMS — Complete Development Phases
+# Project Roadmap: Learn Hub LMS Development
 
-This document outlines the entire step-by-step roadmap and phases that were completed to build the Learn Hub LMS from scratch.
-
-### Phase 1: Project Setup & UI Architecture
-- [x] Initialize Spring Boot 4.x application with Java 17+.
-- [x] Setup static folder structure (HTML, CSS, JS).
-- [x] Build the global `style.css` featuring a Glassmorphism design system.
-- [x] Create centralized frontend `api.js` wrapper for fetch requests.
-
-### Phase 2: Database Design & Models
-- [x] Configure MySQL database and Hibernate JPA settings.
-- [x] Create core Entity models: `UserAccount`, `Courses`, `Lesson`, `Quiz`.
-- [x] Create secondary Entity models: `IncomeRecord`, `Exam`, `Response`, `WithdrawRequest`.
-
-### Phase 3: Security & Authentication
-- [x] Implement Spring Security 6.x config with `SecurityFilterChain`.
-- [x] Build stateless JWT generation and validation logic (`JwtService`, `JwtAuthFilter`).
-- [x] Create Auth endpoints (Login, Register).
-- [x] Design global authentication state management in frontend (`auth.js`).
-
-### Phase 4: Admin Dashboard & User Management
-- [x] Build Admin Controller & Service.
-- [x] Implement user listing, role assignment (Admin, Teacher, Student), and account banning.
-- [x] Design `admin/dashboard.html` with tabs for Analytics, Users, and Courses.
-
-### Phase 5: Course Creation & Management
-- [x] Build Course endpoints for Teachers.
-- [x] Design `teacher/course-editor.html` for creating and updating courses.
-- [x] Implement image upload logic / URL handling for course thumbnails.
-
-### Phase 6: Lesson & Video Management
-- [x] Build Lesson endpoints linked to specific Courses.
-- [x] Add functionality in the Course Editor to add YouTube embeds, descriptions, and file links.
-
-### Phase 7: Quiz & Exam System
-- [x] Build Quiz endpoints to allow teachers to add multiple-choice questions to a course.
-- [x] Integrate Quiz management seamlessly into the Course Editor UI.
-
-### Phase 8: Student Dashboard & Course Enrollment
-- [x] Build Student endpoints for browsing public courses.
-- [x] Design `student/dashboard.html` with search and filtering.
-- [x] Implement basic free-course enrollment logic.
-
-### Phase 9: Video Player & Exam Taking UI
-- [x] Design `student/course-detail.html` (The Course Player).
-- [x] Implement dynamic sidebar for lesson navigation.
-- [x] Build Exam UI that renders all course quizzes and calculates the final score upon submission.
-
-### Phase 10: Automatic Certificate Generation
-- [x] Build Certificate endpoint checking if exam score is ≥ 50%.
-- [x] Design `certificate.html` with premium CSS layout and printable format.
-
-### Phase 11: Dynamic Analytics
-- [x] Implement global repository queries (`count()`, `sum()`) for Admin Dashboard.
-- [x] Implement Teacher-specific analytics (total students enrolled, total courses).
-
-### Phase 12: Public API & Landing Page
-- [x] Build public endpoints for fetching recent courses and platform statistics.
-- [x] Design `index.html` (Landing Page) with dynamic course grids and a premium Hero section.
-
-### Phase 13: Advanced Payment & Commission System
-- [x] Upgrade `IncomeRecord` to handle manual transaction IDs, payment methods, and commission.
-- [x] Implement 10% Site Owner commission deduction logic.
-- [x] Build Teacher Withdrawal system (Endpoints & Repository).
-- [x] Implement Admin & Teacher approval logic for pending enrollments.
-
-### Phase 14: Final UI Enhancements & Refinement
-- [x] Build `payment.html` manual gateway page for bKash, Nagad, and Bank transfers.
-- [x] Add "Pending Enrollments" tab in both Admin and Teacher dashboards.
-- [x] Add "Earnings & Withdrawals" tab for Teachers.
-- [x] Implement status badges (Pending, Enrolled, Rejected) globally.
-- [x] Finalize full-width responsive header and tone down bright colors for a professional finish.
+This document outlines the strategic phases and technical milestones achieved during the development of **Learn Hub**, a premium Online Learning Management System.
 
 ---
-**Status:** All 14 Phases Completed! 🎉
+
+## Executive Summary
+Learn Hub was developed as a full-stack, enterprise-grade LMS using **Java Spring Boot** and **Vanilla Web Technologies**. The project focused on scalability, role-based security, and a seamless financial ecosystem for teachers and administrators.
+
+---
+
+## Development Roadmap & Milestones
+
+### Phase 1: Infrastructure & Foundation
+*   **Backend Setup:** Initialized Spring Boot project with Spring Data JPA, Web, and Security dependencies.
+*   **Database Design:** Configured MySQL with a relational schema for Users, Courses, Lessons, and Financial Records.
+*   **Core Entities:** Created base JPA entities for `UserAccount` and `Courses`.
+
+### Phase 2: Authentication & Security (RBAC)
+*   **Security Framework:** Implemented Spring Security with JWT (JSON Web Tokens).
+*   **User Roles:** Established three distinct roles: `ADMIN`, `TEACHER`, and `STUDENT`.
+*   **Password Security:** Implemented BCrypt hashing for secure credential storage.
+
+### Phase 3: Teacher Portal & Content Creation
+*   **Course Management:** Built RESTful APIs for Teachers to create, update, and delete courses.
+*   **Lesson Architecture:** Implemented a lesson system supporting YouTube embeds and direct video links.
+*   **Course Editor UI:** Designed a centralized hub for instructors to manage their curriculum.
+
+### Phase 4: Student Experience & Learning Path
+*   **Course Discovery:** Implemented public API endpoints for course browsing and searching.
+*   **Enrollment Logic:** Built the logic for free course enrollment and paid course requests.
+*   **Course Player:** Designed an interactive UI for watching lessons and tracking progress.
+
+### Phase 5: Interactive Assessment & Exams
+*   **Quiz Engine:** Implemented a multiple-choice question (MCQ) system linked to specific courses.
+*   **Auto-Grading:** Built logic to calculate scores and determine pass/fail status (50% threshold).
+*   **Exam Security:** Restricted exam access to enrolled students only.
+
+### Phase 6: Automated Certification System
+*   **Certificate Generation:** Developed a system to generate achievement certificates for successful students.
+*   **Dynamic Data:** Certificates automatically pull student names, course titles, and teacher details.
+*   **Print Optimization:** Designed a print-ready CSS layout for high-quality certificate downloads.
+
+### Phase 7: Financial Ecosystem & Manual Gateway
+*   **Income Tracking:** Implemented `IncomeRecord` system to track every transaction.
+*   **Manual Gateway:** Built a UI for students to submit Transaction IDs (bKash, Nagad, Bank).
+*   **Approval Workflow:** Created dual-approval logic where both Admins and Teachers can verify payments.
+
+### Phase 8: Commission & Withdrawal System
+*   **Site Commission:** Automated 10% site commission deduction on every paid enrollment.
+*   **Teacher Earnings:** Implemented a net-earnings tracking system (90% to teacher).
+*   **Withdrawal Portal:** Built a request system for teachers to payout their earnings.
+
+### Phase 9: Admin Control Hub
+*   **Global Analytics:** Implemented a dashboard showing Total Revenue, Total Users, and Platform Commission.
+*   **User Management:** Created tools for Admins to ban/activate users and change roles.
+*   **Withdrawal Approval:** Centralized approval logic for teacher payout requests.
+
+### Phase 10: UI/UX Refinement & Professional Polish
+*   **Design System:** Implemented a consistent **Glassmorphism** theme across all dashboards.
+*   **Responsive Layout:** Optimized the interface for mobile, tablet, and desktop viewing.
+*   **Iconography:** Replaced all emojis with professional FontAwesome icons for a corporate finish.
+
+---
+
+## Technical Specifications
+
+| Component | Technology |
+|---|---|
+| **Language** | Java 17+ |
+| **Backend** | Spring Boot 3.x / 4.x |
+| **Security** | Spring Security, JWT, BCrypt |
+| **Database** | MySQL / Hibernate ORM |
+| **Frontend** | HTML5, CSS3 (Vanilla), JavaScript (ES6) |
+| **Styling** | Custom CSS Grid, Flexbox, FontAwesome |
+
+---
+
+## Development Status
+**Project Status:** 100% Completed
+**Last Update:** May 14, 2026
+**Version:** 1.0.0 (Production Ready)
